@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>TurfIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0e0f;
+  --surface: #141517;
+  --surface2: #1c1e21;
+  --surface3: #242729;
+  --border: #2a2d31;
+  --gold: #c9a84c;
+  --gold-light: #e8c870;
+  --gold-dim: #7a6230;
+  --green: #3dba7e;
+  --red: #e05555;
+  --blue: #4a9eff;
+  --purple: #9b7ff0;
+  --text: #e8e6e1;
+  --text-muted: #7a7975;
+  --text-dim: #4a4845;
+  --nav-h: 64px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Instrument Sans', sans-serif;
+}
+
+/* ── SHELL ── */
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  height: 100dvh;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 52px;
+  background: rgba(13,14,15,0.97);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 50;
+}
+
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-dot {
+  width: 7px; height: 7px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.4;transform:scale(.65)}
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.track-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--gold);
+  background: rgba(201,168,76,.1);
+  border: 1px solid var(--gold-dim);
+  padding: 3px 8px;
+  border-radius: 2px;
+  letter-spacing: .5px;
+}
+
+/* ── RACE STRIP ── */
+.race-strip {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  overflow-x: auto;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.race-strip::-webkit-scrollbar { display:none; }
+
+.race-chip {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all .15s;
+  background: var(--surface2);
+  min-width: 54px;
+}
+.race-chip.active {
+  border-color: var(--gold);
+  background: rgba(201,168,76,.08);
+}
+.rc-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  color: var(--gold);
+  line-height: 1;
+}
+.rc-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.rc-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  margin-top: 4px;
+}
+.dot-live { background: var(--green); }
+.dot-upcoming { background: var(--blue); opacity:.6; }
+.dot-closed { background: var(--surface3); }
+
+/* ── CONDITIONS ROW ── */
+.cond-row {
+  flex-shrink: 0;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+}
+.cond-row::-webkit-scrollbar { display:none; }
+
+.cond-cell {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-right: 1px solid var(--border);
+  min-width: 90px;
+}
+.cond-cell:last-child { border-right: none; }
+.cond-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.cond-val {
+  font-size: 13px;
+  font-weight: 600;
+}
+.cond-sub { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+.cv-good { color: var(--green); }
+.cv-fair { color: var(--gold); }
+.cv-poor { color: var(--red); }
+
+/* ── SCROLL AREA ── */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── TAB BAR (horizontal scrolling) ── */
+.tab-bar {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s;
+}
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── PANELS ── */
+.panel { display: none; padding: 12px 16px 80px; }
+.panel.active { display: block; }
+
+/* ── HORSE CARDS ── */
+.horse-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color .2s;
+  animation: fadeUp .3s ease backwards;
+}
+.horse-card.selected { border-color: var(--gold); }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.horse-card:nth-child(1){animation-delay:.04s}
+.horse-card:nth-child(2){animation-delay:.08s}
+.horse-card:nth-child(3){animation-delay:.12s}
+.horse-card:nth-child(4){animation-delay:.16s}
+.horse-card:nth-child(5){animation-delay:.20s}
+.horse-card:nth-child(6){animation-delay:.24s}
+
+.hc-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 14px 10px;
+}
+
+.hc-num {
+  width: 40px; height: 40px;
+  background: var(--surface3);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.hc-info { flex: 1; min-width: 0; }
+
+.hc-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  color: var(--text);
+  letter-spacing: .5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hc-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Score ring */
+.ring-wrap {
+  flex-shrink: 0;
+  position: relative;
+  width: 50px; height: 50px;
+}
+.ring-wrap svg { transform: rotate(-90deg); }
+.ring-inner {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 17px;
+  color: var(--text);
+}
+
+/* Mini badges */
+.hc-badges {
+  display: flex;
+  gap: 5px;
+  padding: 0 14px 10px;
+  flex-wrap: wrap;
+}
+.badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 3px 7px;
+  border-radius: 3px;
+}
+.b-fit  { background: rgba(61,186,126,.1);  color: var(--green); }
+.b-form { background: rgba(201,168,76,.1);  color: var(--gold); }
+.b-jock { background: rgba(155,127,240,.1); color: var(--purple); }
+.b-draw { background: rgba(74,158,255,.1);  color: var(--blue); }
+.b-odds { background: rgba(201,168,76,.08); color: var(--gold-light); }
+
+/* Bars */
+.hc-bars {
+  padding: 0 14px 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+.bar-lbl {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.bar-track {
+  height: 4px;
+  background: var(--surface3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .8s cubic-bezier(.23,1,.32,1);
+}
+.bf-green  { background: var(--green); }
+.bf-gold   { background: var(--gold); }
+.bf-purple { background: var(--purple); }
+.bf-blue   { background: var(--blue); }
+
+/* Expand button */
+.hc-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-dim);
+  gap: 4px;
+  transition: all .15s;
+}
+.hc-expand:hover { color: var(--gold); background: rgba(201,168,76,.04); }
+
+.hc-detail {
+  display: none;
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+  background: rgba(255,255,255,.015);
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.hc-detail.open { display: block; }
+
+.detail-tags {
+  display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px;
+}
+.dtag {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  background: rgba(201,168,76,.08);
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+}
+
+/* Form dots */
+.form-row { display: flex; gap: 3px; margin-top: 6px; }
+.fdot {
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  font-weight: 700;
+}
+.fd1{background:rgba(61,186,126,.2);color:var(--green)}
+.fd2{background:rgba(201,168,76,.15);color:var(--gold)}
+.fd3{background:rgba(74,158,255,.12);color:var(--blue)}
+.fdx{background:var(--surface3);color:var(--text-dim)}
+
+/* ── STAT CARDS (jockeys/trainers) ── */
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  padding: 14px;
+}
+.sc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.sc-name { font-size: 16px; font-weight: 600; }
+.sc-sub  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+.sc-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 3px;
+}
+.sp-green  { background: rgba(61,186,126,.1); color: var(--green); }
+.sp-gold   { background: rgba(201,168,76,.1); color: var(--gold); }
+.sp-blue   { background: rgba(74,158,255,.1); color: var(--blue); }
+.sp-red    { background: rgba(224,85,85,.1);  color: var(--red); }
+.sp-purple { background: rgba(155,127,240,.1);color: var(--purple); }
+
+.sc-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.sc-stat {
+  background: var(--surface2);
+  border-radius: 6px;
+  padding: 8px;
+  text-align: center;
+}
+.sc-stat-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 16px;
+  color: var(--text);
+}
+.sc-stat-lbl {
+  font-size: 9px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.win-bar-row { display: flex; align-items: center; gap: 8px; }
+.win-bar-track { flex:1; height:4px; background:var(--surface3); border-radius:2px; }
+.win-bar-fill  { height:100%; background:var(--green); border-radius:2px; }
+
+/* ── PICKS ── */
+.pick-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.pick-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+}
+.pick-1::before { background: var(--gold); }
+.pick-2::before { background: #aaa; }
+.pick-3::before { background: #cd7f32; }
+
+.pick-rank {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.pr-1{color:var(--gold)} .pr-2{color:#aaa} .pr-3{color:#cd7f32}
+
+.pick-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  color: var(--text);
+  margin-bottom: 2px;
+  letter-spacing: .5px;
+}
+.pick-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+.pick-score {
+  font-family: 'DM Mono', monospace;
+  font-size: 32px;
+  color: var(--gold);
+  line-height: 1;
+  margin: 8px 0;
+}
+.pick-reason { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+/* Value table mobile */
+.val-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(42,45,49,.6);
+}
+.val-row:last-child { border-bottom: none; }
+.val-name { font-size: 14px; font-weight: 500; }
+.val-right { display: flex; align-items: center; gap: 8px; }
+
+/* ── CONDITIONS PANEL ── */
+.cond-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.cond-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.ct-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.ct-val { font-size: 18px; font-weight: 600; }
+.ct-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin: 16px 0 10px;
+}
+
+.meter-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.meter-lbl { font-size: 12px; color: var(--text-muted); flex-shrink:0; width:140px; }
+.meter-track { flex:1; height:5px; background:var(--surface3); border-radius:3px; overflow:hidden; }
+.meter-fill { height:100%; background:linear-gradient(90deg,var(--gold-dim),var(--gold)); border-radius:3px; }
+.meter-val { font-family:'DM Mono',monospace; font-size:11px; color:var(--text-muted); width:32px; text-align:right; flex-shrink:0; }
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 8px;
+}
+.wx-cell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 6px;
+  text-align: center;
+}
+.wx-icon { font-size: 22px; margin-bottom: 4px; }
+.wx-val  { font-family:'DM Mono',monospace; font-size:14px; }
+.wx-lbl  { font-size: 9px; color: var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+.week-strip {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+.wd-cell {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 4px;
+  text-align: center;
+}
+.wd-day  { font-size:9px; color:var(--text-dim); margin-bottom:3px; }
+.wd-icon { font-size:16px; }
+.wd-tmp  { font-family:'DM Mono',monospace; font-size:11px; margin-top:3px; }
+.wd-rain { font-size:9px; color:var(--blue); margin-top:2px; }
+
+/* ── ENTRY FORM ── */
+.form-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.form-section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.input-group { margin-bottom: 12px; }
+.input-group label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+input, select, textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 11px 12px;
+  border-radius: 6px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 16px; /* prevents iOS zoom */
+  outline: none;
+  transition: border-color .15s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--gold-dim); }
+select { background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a7975'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }
+
+.form-row-2 { display: grid; grid-template-columns:1fr 1fr; gap: 10px; }
+
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+.ftag {
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all .15s;
+}
+.ftag.on {
+  background: rgba(201,168,76,.1);
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+.save-btn {
+  width: 100%;
+  padding: 15px;
+  background: var(--gold);
+  color: #0d0e0f;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s;
+  margin-top: 4px;
+}
+.save-btn:active { background: var(--gold-light); }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  flex-shrink: 0;
+  display: flex;
+  background: rgba(13,14,15,.97);
+  border-top: 1px solid var(--border);
+  padding-bottom: var(--safe-bottom);
+  height: calc(var(--nav-h) + var(--safe-bottom));
+  position: relative;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  transition: all .15s;
+  padding-top: 6px;
+  border-top: 2px solid transparent;
+}
+.nav-item.active { border-top-color: var(--gold); }
+.nav-icon { font-size: 20px; line-height: 1; }
+.nav-lbl {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: .5px;
+  font-weight: 500;
+}
+.nav-item.active .nav-lbl { color: var(--gold); }
+
+/* ── PICKS FAB ── */
+.fab {
+  position: fixed;
+  bottom: calc(var(--nav-h) + var(--safe-bottom) + 14px);
+  right: 16px;
+  z-index: 40;
+  background: var(--gold);
+  color: #0d0e0f;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 20px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(201,168,76,.35);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .15s;
+}
+.fab:active { transform: scale(.96); }
+
+/* Scrollbars */
+::-webkit-scrollbar { width:3px; height:3px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:2px; }
+
+/* Notice */
+.notice {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: rgba(74,158,255,.05);
+  border: 1px solid rgba(74,158,255,.12);
+  border-radius: 6px;
+  padding: 9px 12px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.val-section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin: 16px 0 10px;
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="logo"><div class="logo-dot"></div>TurfIQ</div>
+    <div class="topbar-right">
+      <div class="track-badge" id="trackBadge">Randwick · R4</div>
+    </div>
+  </div>
+
+  <!-- RACE STRIP -->
+  <div class="race-strip" id="raceStrip"></div>
+
+  <!-- CONDITIONS STRIP -->
+  <div class="cond-row">
+    <div class="cond-cell"><div class="cond-lbl">Track</div><div class="cond-val cv-good">Good 4</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Weather</div><div class="cond-val">☀️ 18°C</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Wind</div><div class="cond-val">12km/h W</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Rail</div><div class="cond-val cv-fair">+3m</div></div>
+    <div class="cond-cell"><div class="cond-lbl">GoingStick</div><div class="cond-val">4.2</div></div>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div class="scroll-area">
+
+    <!-- TAB BAR -->
+    <div class="tab-bar" id="tabBar">
+      <div class="tab active" onclick="switchTab('field')">Field</div>
+      <div class="tab" onclick="switchTab('jockeys')">Jockeys</div>
+      <div class="tab" onclick="switchTab('trainers')">Trainers</div>
+      <div class="tab" onclick="switchTab('form')">Form</div>
+      <div class="tab" onclick="switchTab('conditions')">Track</div>
+      <div class="tab" onclick="switchTab('picks')">★ Picks</div>
+      <div class="tab" onclick="switchTab('entry')">+ Add</div>
+    </div>
+
+    <!-- FIELD PANEL -->
+    <div id="field" class="panel active">
+      <!-- Container populated dynamically by JavaScript -->
+    </div>
+
+    <!-- JOCKEYS PANEL -->
+    <div id="jockeys" class="panel">
+      <div class="stat-card">
+        <div class="sc-header">
+          <div>
+            <div class="sc-name">J. McDonald</div>
+            <div class="sc-sub">Track SR: 22.4% · Last 14 days: 5 wins</div>
+          </div>
+          <div class="sc-pill sp-green">A+ Rank</div>
+        </div>
+        <div class="sc-stats">
+          <div class="sc-stat"><div class="sc-stat-val">24%</div><div class="sc-stat-lbl">Win %</div></div>
+          <div class="sc-stat"><div class="sc-stat-val">51%</div><div class="sc-stat-lbl">Place %</div></div>
+          <div class="sc-stat"><div class="sc-stat-val">+14.2</div><div class="sc-stat-lbl">ROI %</div></div>
+        </div>
+        <div class="win-bar-row">
+          <div class="win-bar-track"><div class="win-bar-fill" style="width: 74%"></div></div>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="sc-header">
+          <div>
+            <div class="sc-name">J. Collett</div>
+            <div class="sc-sub">Track SR: 14.8% · Last 14 days: 2 wins</div>
+          </div>
+          <div class="sc-pill sp-gold">B+ Rank</div>
+        </div>
+        <div class="sc-stats">
+          <div class="sc-stat"><div class="sc-stat-val">15%</div><div class="sc-stat-lbl">Win %</div></div>
+          <div class="sc-stat"><div class="sc-stat-val">38%</div><div class="sc-stat-lbl">Place %</div></div>
+          <div class="sc-stat"><div class="sc-stat-val">-4.8</div><div class="sc-stat-lbl">ROI %</div></div>
+        </div>
+        <div class="win-bar-row">
+          <div class="win-bar-track"><div class="win-bar-fill" style="width: 45%; background: var(--gold)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRAINERS PANEL -->
+    <div id="trainers" class="panel">
+      <div class="stat-card">
+        <div class="sc-header">
+          <div>
+            <div class="sc-name">Chris Waller</div>
+            <div class="sc-sub">Randwick Stables · 142 Runners YTD</div>
+          </div>
+          <div class="sc-pill sp-purple">Elite</div>
+        </div>
+        <div class="sc-stats">
+          <div class="sc-stat"><div class="sc-stat-val">18.5%</div><div class="sc-stat-lbl">Win %</div></div>
+          <div class="sc-stat"><div class="sc-stat-val">44.1%</div><div class="sc-stat-lbl">Place %</div></div>
+          <div class="sc-stat"><div class="sc-stat-val">1.42</div><div class="sc-stat-lbl">A/E Est</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM PANEL -->
+    <div id="form" class="panel">
+      <div class="notice">Form analysis uses previous 4 runs. Speed map position values derived from settling configurations.</div>
+      <div class="val-section-title">Speed Map Predicted Settlement</div>
+      <div class="val-row"><div class="val-name">1. Thunder Road</div><div class="val-right"><span class="sc-pill sp-blue">Leader</span></div></div>
+      <div class="val-row"><div class="val-name">3. Alchemist</div><div class="val-right"><span class="sc-pill sp-gold">On Pace</span></div></div>
+      <div class="val-row"><div class="val-name">2. Desert Orchid</div><div class="val-right"><span class="sc-pill sp-purple">Midfield</span></div></div>
+      <div class="val-row"><div class="val-name">4. Velvet Steel</div><div class="val-right"><span class="sc-pill sp-red">Backmarker</span></div></div>
+    </div>
+
+    <!-- CONDITIONS/TRACK PANEL -->
+    <div id="conditions" class="panel">
+      <div class="cond-grid">
+        <div class="cond-tile"><div class="ct-lbl">Moisture</div><div class="ct-val">34%</div><div class="ct-sub">Optimal Evap</div></div>
+        <div class="cond-tile"><div class="ct-lbl">Penetrometer</div><div class="ct-val">5.35</div><div class="ct-sub">Even Cushion</div></div>
+      </div>
+      <div class="section-title">Bias Metrics</div>
+      <div class="meter-row">
+        <div class="meter-lbl">Inside Rail Advantage</div>
+        <div class="meter-track"><div class="meter-fill" style="width: 65%"></div></div>
+        <div class="meter-val">6.5</div>
+      </div>
+      <div class="meter-row">
+        <div class="meter-lbl">Swoopers Parallel</div>
+        <div class="meter-track"><div class="meter-fill" style="width: 40%"></div></div>
+        <div class="meter-val">4.0</div>
+      </div>
+    </div>
+
+    <!-- PICKS PANEL -->
+    <div id="picks" class="panel">
+      <!-- Container populated dynamically by JavaScript -->
+    </div>
+
+    <!-- ENTRY FORM PANEL -->
+    <div id="entry" class="panel">
+      <form id="horseForm" onsubmit="handleFormSubmit(event)">
+        <div class="form-section">
+          <div class="form-section-title">Add Custom Analytics Profile</div>
+          <div class="input-group">
+            <label>Horse Name</label>
+            <input type="text" id="h_name" required placeholder="e.g. Winx">
+          </div>
+          <div class="form-row-2">
+            <div class="input-group">
+              <label>Saddle Number</label>
+              <input type="number" id="h_num" required min="1" max="24">
+            </div>
+            <div class="input-group">
+              <label>Current Odds</label>
+              <input type="text" id="h_odds" required placeholder="e.g. 3.40">
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Jockey Profile</label>
+            <select id="h_jock">
+              <option value="J. McDonald">J. McDonald</option>
+              <option value="J. Collett">J. Collett</option>
+              <option value="B. Avdulla">B. Avdulla</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Algorithmic Tags</label>
+            <div class="tag-cloud">
+              <div class="ftag" onclick="this.classList.toggle('on')">Distance Fit</div>
+              <div class="ftag on" onclick="this.classList.toggle('on')">Track Specialist</div>
+              <div class="ftag" onclick="this.classList.toggle('on')">Weight Drop</div>
+            </div>
+          </div>
+          <button type="submit" class="save-btn">Inject to Active Field</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- FLOATING ACTION BUTTON -->
+  <button class="fab" onclick="switchTab('picks')">
+    <span class="nav-icon">★</span> View Picks
+  </button>
+
+  <!-- BOTTOM NAVIGATION BAR -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-field" onclick="switchTab('field')">
+      <span class="nav-icon">📋</span>
+      <span class="nav-lbl">Field</span>
+    </div>
+    <div class="nav-item" id="nav-conditions" onclick="switchTab('conditions')">
+      <span class="nav-icon">🌱</span>
+      <span class="nav-lbl">Track</span>
+    </div>
+    <div class="nav-item" id="nav-picks" onclick="switchTab('picks')">
+      <span class="nav-icon">★</span>
+      <span class="nav-lbl">Picks</span>
+    </div>
+    <div class="nav-item" id="nav-entry" onclick="switchTab('entry')">
+      <span class="nav-icon">⚡</span>
+      <span class="nav-lbl">Add Profile</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Mock application database state
+const appData = {
+  activeRace: 4,
+  races: [
+    { num: 1, time: "12:15", status: "closed" },
+    { num: 2, time: "12:50", status: "closed" },
+    { num: 3, time: "13:25", status: "live" },
+    { num: 4, time: "14:00", status: "upcoming" },
+    { num: 5, time: "14:40", status: "upcoming" },
+    { num: 6, time: "15:20", status: "upcoming" },
+    { num: 7, time: "16:00", status: "upcoming" }
+  ],
+  horses: [
+    { num: 1, name: "Thunder Road", jockey: "J. McDonald", barrier: 4, weight: "58kg", score: 94, odds: "2.80", speed: 90, form: 85, stamina: 95, jockRating: 98, pastRuns: ["1", "3", "2", "1"], tags: ["Distance Fit", "Track Specialist"], notes: "Superb course records over this trip. J-Mac retaining the ride implies peak training validation." },
+    { num: 2, name: "Desert Orchid", jockey: "J. Collett", barrier: 9, weight: "56.5kg", score: 88, odds: "5.50", speed: 82, form: 90, stamina: 80, jockRating: 85, pastRuns: ["2", "4", "1", "3"], tags: ["Weight Drop"], notes: "Drops 2kg from structural class run last fortnight. Expect dynamic midfield settling behavior." },
+    { num: 3, name: "Alchemist", jockey: "B. Avdulla", barrier: 2, weight: "55kg", score: 81, odds: "7.00", speed: 88, form: 74, stamina: 84, jockRating: 80, pastRuns: ["5", "1", "X", "2"], tags: ["Trainer Alert"], notes: "Resuming after structural spell. Strong trial data suggests readiness, look for early price fluctuations." },
+    { num: 4, name: "Velvet Steel", jockey: "T. Berry", barrier: 11, weight: "54kg", score: 79, odds: "12.00", speed: 75, form: 80, stamina: 88, jockRating: 88, pastRuns: ["4", "6", "2", "4"], tags: [], notes: "Consistently grinding closing data metrics, but wide draw cuts into positional flexibility." }
+  ]
+};
+
+// Application setup initialization
+document.addEventListener("DOMContentLoaded", () => {
+  renderRaceStrip();
+  renderField();
+  renderPicks();
+});
+
+// Build Top Horizontal Scrolling Race Selection Strip
+function renderRaceStrip() {
+  const container = document.getElementById("raceStrip");
+  container.innerHTML = "";
+  appData.races.forEach(race => {
+    const chip = document.createElement("div");
+    chip.className = `race-chip ${race.num === appData.activeRace ? 'active' : ''}`;
+    chip.onclick = () => {
+      document.querySelectorAll(".race-chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      appData.activeRace = race.num;
+      document.getElementById("trackBadge").innerText = `Randwick · R${race.num}`;
+    };
+    
+    chip.innerHTML = `
+      <div class="rc-num">R${race.num}</div>
+      <div class="rc-time">${race.time}</div>
+      <div class="rc-dot dot-${race.status}"></div>
+    `;
+    container.appendChild(chip);
+  });
+}
+
+// Render dynamic interactive horse list
+function renderField() {
+  const fieldContainer = document.getElementById("field");
+  fieldContainer.innerHTML = "";
+
+  appData.horses.forEach(horse => {
+    const card = document.createElement("div");
+    card.className = "horse-card";
+    card.id = `hc-${horse.num}`;
+    
+    // Process form configuration strings 
+    const formHtml = horse.pastRuns.map(r => `<div class="fdot fd${r === 'X' ? 'x' : r}">${r}</div>`).join('');
+    
+    // Process functional condition tags
+    const tagsHtml = horse.tags.map(t => `<span class="dtag">${t}</span>`).join('');
+
+    card.innerHTML = `
+      <div class="hc-top" onclick="toggleCardSelect(${horse.num})">
+        <div class="hc-num">${horse.num}</div>
+        <div class="hc-info">
+          <div class="hc-name">${horse.name}</div>
+          <div class="hc-sub">Barrier ${horse.barrier} · ${horse.jockey} · ${horse.weight}</div>
+        </div>
+        <div class="ring-wrap">
+          <svg width="50" height="50">
+            <circle cx="25" cy="25" r="21" stroke="#242729" stroke-width="3" fill="none" />
+            <circle cx="25" cy="25" r="21" stroke="var(--gold)" stroke-width="3" fill="none" 
+              stroke-dasharray="132" stroke-dashoffset="${132 - (132 * horse.score) / 100}" />
+          </svg>
+          <div class="ring-inner">${horse.score}</div>
+        </div>
+      </div>
+
+      <div class="hc-badges">
+        <span class="badge b-odds">$${parseFloat(horse.odds).toFixed(2)}</span>
+        ${horse.tags.length > 0 ? `<span class="badge b-fit">${horse.tags[0]}</span>` : ''}
+        <span class="badge b-jock">${horse.jockey.split('. ')[1]}</span>
+      </div>
+
+      <div class="hc-bars" onclick="toggleCardSelect(${horse.num})">
+        <div>
+          <div class="bar-lbl"><span>Speed</span><span>${horse.speed}</span></div>
+          <div class="bar-track"><div class="bar-fill bf-green" style="width: ${horse.speed}%"></div></div>
+        </div>
+        <div>
+          <div class="bar-lbl"><span>Form</span><span>${horse.form}</span></div>
+          <div class="bar-track"><div class="bar-fill bf-gold" style="width: ${horse.form}%"></div></div>
+        </div>
+        <div>
+          <div class="bar-lbl"><span>Stamina</span><span>${horse.stamina}</span></div>
+          <div class="bar-track"><div class="bar-fill bf-purple" style="width: ${horse.stamina}%"></div></div>
+        </div>
+        <div>
+          <div class="bar-lbl"><span>Jockey</span><span>${horse.jockRating}</span></div>
+          <div class="bar-track"><div class="bar-fill bf-blue" style="width: ${horse.jockRating}%"></div></div>
+        </div>
+      </div>
+
+      <div class="hc-expand" onclick="toggleDetails(${horse.num})">
+        <span>Analytics Workspace</span> ↓
+      </div>
+      
+      <div class="hc-detail" id="detail-${horse.num}">
+        <div><strong>Historical Profile Run Log:</strong></div>
+        <div class="form-row">${formHtml}</div>
+        <p style="margin-top:10px;">${horse.notes}</p>
+        <div class="detail-tags">${tagsHtml}</div>
+      </div>
+    `;
+    fieldContainer.appendChild(card);
+  });
+}
+
+// Generate the algorithmic target selections
+function renderPicks() {
+  const container = document.getElementById("picks");
+  container.innerHTML = "";
+  
+  // Sort structured mock array descending by analytical ranking score
+  const sorted = [...appData.horses].sort((a, b) => b.score - a.score);
+  
+  sorted.slice(0, 3).forEach((horse, index) => {
+    const rank = index + 1;
+    const card = document.createElement("div");
+    card.className = `pick-card pick-${rank}`;
+    card.innerHTML = `
+      <div class="pick-rank pr-${rank}">Calculated Rank 0${rank}</div>
+      <div class="pick-name">${horse.name}</div>
+      <div class="pick-meta">Saddle #${horse.num} · Barrier ${horse.barrier} · Jockey ${horse.jockey}</div>
+      <div class="pick-score">${horse.score}%</div>
+      <div class="pick-reason">${horse.notes} Evaluated raw market value index sits securely at $${horse.odds}.</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// Unified navigation framework router
+function switchTab(tabId) {
+  // Hide panels
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  // Show target panel
+  const targetedPanel = document.getElementById(tabId);
+  if (targetedPanel) targetedPanel.classList.add("active");
+
+  // Synchronize Tab Bar selection
+  document.querySelectorAll(".tab-bar .tab").forEach(t => t.classList.remove("active"));
+  const tabs = Array.from(document.querySelectorAll(".tab-bar .tab"));
+  const matchingTab = tabs.find(t => t.innerText.toLowerCase().includes(tabId.slice(0,4)));
+  if (matchingTab) matchingTab.classList.add("active");
+
+  // Synchronize Bottom Bar Menu selection
+  document.querySelectorAll(".bottom-nav .nav-item").forEach(n => n.classList.remove("active"));
+  const navItem = document.getElementById(`nav-${tabId}`);
+  if (navItem) navItem.classList.add("active");
+}
+
+// Visual layout selectors
+function toggleCardSelect(num) {
+  const el = document.getElementById(`hc-${num}`);
+  if (el) el.classList.toggle("selected");
+}
+
+function toggleDetails(num) {
+  const el = document.getElementById(`detail-${num}`);
+  if (el) el.classList.toggle("open");
+}
+
+// Inject new configurations straight into application state framework
+function handleFormSubmit(e) {
+  e.preventDefault();
+  
+  const name = document.getElementById("h_name").value;
+  const num = parseInt(document.getElementById("h_num").value);
+  const odds = document.getElementById("h_odds").value;
+  const jockey = document.getElementById("h_jock").value;
+  
+  // Scrape checked elements from active cloud array tag list
+  const activeTags = [];
+  document.querySelectorAll(".tag-cloud .ftag.on").forEach(tag => {
+    activeTags.push(tag.innerText);
+  });
+
+  const newHorse = {
+    num: num,
+    name: name,
+    jockey: jockey,
+    barrier: Math.floor(Math.random() * 12) + 1,
+    weight: "55.5kg",
+    score: Math.floor(Math.random() * 25) + 70, // Generate real computational value bounds
+    odds: odds,
+    speed: Math.floor(Math.random() * 30) + 65,
+    form: Math.floor(Math.random() * 30) + 65,
+    stamina: Math.floor(Math.random() * 30) + 65,
+    jockRating: Math.floor(Math.random() * 20) + 75,
+    pastRuns: ["3", "1", "2", "X"],
+    tags: activeTags,
+    notes: "Custom entry data profile compiled locally."
+  };
+
+  appData.horses.unshift(newHorse);
+  
+  // Re-initialize layouts
+  renderField();
+  renderPicks();
+  
+  // Reset fields cleanly
+  document.getElementById("horseForm").reset();
+  switchTab("field");
+}
+</script>
+</body>
+</html>
