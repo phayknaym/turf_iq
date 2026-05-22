@@ -6,7 +6,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>TurfIQ</title>
+<title>TurfIQ Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -20,6 +20,7 @@
   --gold-dim: #7a6230;
   --green: #3dba7e;
   --red: #e05555;
+  --red-dim: rgba(224, 85, 85, 0.12);
   --blue: #4a9eff;
   --purple: #9b7ff0;
   --text: #e8e6e1;
@@ -93,12 +94,12 @@ html, body {
   border-radius: 2px;
 }
 
-/* ── RACE STRIP ── */
+/* ── HORIZONTALLY SCROLLABLE TIMELINE STRIP ── */
 .race-strip {
   flex-shrink: 0;
   display: flex;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: 10px;
+  padding: 12px 16px;
   overflow-x: auto;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -112,57 +113,52 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6px 12px;
+  justify-content: center;
+  padding: 8px 12px;
   border-radius: 6px;
   border: 1px solid var(--border);
   cursor: pointer;
   background: var(--surface2);
-  min-width: 65px;
+  min-width: 125px;
 }
 .race-chip.active {
   border-color: var(--gold);
   background: rgba(201,168,76,.08);
 }
-.rc-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 18px;
-  color: var(--gold);
-  line-height: 1;
+.rc-venue {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
 }
 .rc-time {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  color: var(--text-muted);
-  margin-top: 2px;
+  font-size: 10px;
+  color: var(--gold);
+  margin-top: 4px;
 }
 
 /* ── CONDITIONS ROW ── */
 .cond-row {
   flex-shrink: 0;
   display: flex;
-  gap: 0;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   border-bottom: 1px solid var(--border);
 }
 .cond-row::-webkit-scrollbar { display:none; }
-
 .cond-cell {
   flex-shrink: 0;
   padding: 8px 14px;
   border-right: 1px solid var(--border);
   min-width: 95px;
 }
-.cond-cell:last-child { border-right: none; }
 .cond-lbl {
   font-family: 'DM Mono', monospace;
   font-size: 8px;
   color: var(--text-dim);
   text-transform: uppercase;
-  margin-bottom: 3px;
 }
-.cond-val { font-size: 13px; font-weight: 600; }
+.cond-val { font-size: 13px; font-weight: 600; margin-top: 1px;}
 .cv-good { color: var(--green); }
 
 /* ── SCROLL AREA ── */
@@ -176,15 +172,15 @@ html, body {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   padding: 12px 16px;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
-  color: var(--gold);
+  color: var(--text-muted);
   font-family: 'DM Mono', monospace;
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
 
-.panel { padding: 12px 16px 80px; }
+.panel { padding: 12px 16px 120px; }
 
 /* ── HORSE CARDS ── */
 .horse-card {
@@ -193,6 +189,10 @@ html, body {
   border-radius: 10px;
   margin-bottom: 10px;
   overflow: hidden;
+}
+.horse-card.scratched-mode {
+  border-color: rgba(224, 85, 85, 0.25);
+  background: rgba(224, 85, 85, 0.01);
 }
 
 .hc-top { display: flex; align-items: center; gap: 12px; padding: 14px; }
@@ -205,8 +205,14 @@ html, body {
   font-size: 20px; color: var(--gold);
   flex-shrink: 0;
 }
+.scratched-mode .hc-num {
+  background: rgba(224, 85, 85, 0.1);
+  color: var(--red);
+}
+
 .hc-info { flex: 1; min-width: 0; }
 .hc-name { font-family: 'Bebas Neue', sans-serif; font-size: 21px; color: var(--text); letter-spacing: .5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scratched-mode .hc-name { color: var(--red); text-decoration: line-through; opacity: 0.5; }
 .hc-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .hc-right {
@@ -222,14 +228,18 @@ html, body {
   color: var(--text-muted);
 }
 .hc-pct-badge {
-  background: rgba(61,186,126,.1);
-  color: var(--green);
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(61,186,126,.15);
+  background: rgba(201,168,76,.12); color: var(--gold-light);
+  font-family: 'DM Mono', monospace; font-size: 13px;
+  padding: 4px 8px; border-radius: 4px; font-weight: 600;
+  border: 1px solid rgba(201,168,76,.2);
+}
+.hc-prob-high {
+  background: rgba(61,186,126,.12); color: var(--green);
+  border-color: rgba(61,186,126,.2);
+}
+.hc-prob-scratch {
+  background: var(--red-dim); color: var(--red);
+  border-color: rgba(224, 85, 85, 0.2);
 }
 
 /* ── BOTTOM NAV ── */
@@ -260,138 +270,183 @@ html, body {
 <div class="shell">
 
   <div class="topbar">
-    <div class="logo"><div class="logo-dot"></div>TurfIQ</div>
-    <div class="track-badge" id="trackBadge">LOADING...</div>
+    <div class="logo"><div class="logo-dot"></div>TurfIQ Pro</div>
+    <div class="track-badge" id="trackBadge">LOADING DASHBOARD...</div>
   </div>
 
   <div class="race-strip" id="raceStrip"></div>
 
   <div class="cond-row">
-    <div class="cond-cell"><div class="cond-lbl">Track</div><div class="cond-val cv-good">Good 4</div></div>
-    <div class="cond-cell"><div class="cond-lbl">Weather</div><div class="cond-val">☀️ 18°C</div></div>
-    <div class="cond-cell"><div class="cond-lbl">Wind</div><div class="cond-val">12km/h W</div></div>
-    <div class="cond-cell"><div class="cond-lbl">Model</div><div class="cond-val" style="color: var(--blue);">Normalized</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Track Surface</div><div class="cond-val cv-good" id="liveRating">Dynamic</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Scratchings</div><div class="cond-val" style="color:var(--red);">Retained (0%)</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Engine Mode</div><div class="cond-val" style="color:var(--blue);">Normalized</div></div>
   </div>
 
   <div class="scroll-area">
-    <div class="tab-bar">Live Field Summary</div>
+    <div class="tab-bar">Predictive Win-Chance Distribution</div>
     <div id="field" class="panel active"></div>
   </div>
 
   <div class="bottom-nav">
     <div class="nav-item">
       <span class="nav-icon">📋</span>
-      <span class="nav-lbl">Dynamic Field</span>
+      <span class="nav-lbl">Time Ordered</span>
     </div>
   </div>
 
 </div>
 
 <script>
-// Multidimensional Race Database Array Framework
-const appData = {
-  activeRaceId: 104,
-  races: [
-    { id: 101, num: 1, venue: "Randwick", time: "12:15", runners: [
-      { num: 1, name: "Alpha Flight", jockey: "B. Shinn", barrier: 2, weight: "59kg", odds: 2.20 },
-      { num: 2, name: "Storm Boy", jockey: "J. McDonald", barrier: 5, weight: "56.5kg", odds: 3.50 },
-      { num: 3, name: "Red Resistance", jockey: "T. Clark", barrier: 1, weight: "56kg", odds: 4.80 }
-    ]},
-    { id: 102, num: 2, venue: "Randwick", time: "12:50", runners: [
-      { num: 1, name: "Fangirl", jockey: "J. McDonald", barrier: 4, weight: "57kg", odds: 1.80 },
-      { num: 2, name: "Mililitia", jockey: "C. Williams", barrier: 3, weight: "55kg", odds: 5.50 },
-      { num: 3, name: "Hindquarter", jockey: "N. Rawiller", barrier: 7, weight: "59kg", odds: 9.00 },
-      { num: 4, name: "Zardozi", jockey: "Z. Purton", barrier: 1, weight: "54.5kg", odds: 12.00 }
-    ]},
-    { id: 103, num: 3, venue: "Randwick", time: "13:25", runners: [
-      { num: 1, name: "Think About It", jockey: "S. Clipperton", barrier: 3, weight: "58.5kg", odds: 2.05 },
-      { num: 2, name: "Hawaii Five O", jockey: "N. Rawiller", barrier: 6, weight: "58.5kg", odds: 4.20 },
-      { num: 3, name: "Bella Nipotina", jockey: "C. Williams", barrier: 2, weight: "56.5kg", odds: 6.50 }
-    ]},
-    { id: 104, num: 4, venue: "Randwick", time: "14:00", runners: [
-      { num: 1, name: "Thunder Road", jockey: "J. McDonald", barrier: 4, weight: "58kg", odds: 2.80 },
-      { num: 2, name: "Desert Orchid", jockey: "J. Collett", barrier: 9, weight: "56.5kg", odds: 5.50 },
-      { num: 3, name: "Alchemist", jockey: "B. Avdulla", barrier: 2, weight: "55kg", odds: 7.00 },
-      { num: 4, name: "Velvet Steel", jockey: "T. Berry", barrier: 6, weight: "54kg", odds: 11.00 }
-    ]},
-    { id: 105, num: 5, venue: "Randwick", time: "14:40", runners: [
-      { num: 1, name: "Imperatriz", jockey: "O. Bosson", barrier: 4, weight: "56.5kg", odds: 1.65 },
-      { num: 2, name: "Private Eye", jockey: "N. Rawiller", barrier: 1, weight: "58.5kg", odds: 4.60 },
-      { num: 3, name: "Buenos Noches", jockey: "D. Gibbons", barrier: 8, weight: "58.5kg", odds: 13.00 }
-    ]}
-  ]
-};
+// Complete Dynamic Multi-Track Australian Racing Database Object
+const liveAusFeed = [
+  { id: 901, venue: "Inverell", state: "NSW", raceNum: 1, name: "Maiden Plate", time: "12:10", rating: "Soft 6", runners: [
+    { num: 1, name: "More Than A Star", jockey: "Ben Looker", trainer: "Brett Cavanough", weight: "59kg", odds: 2.15, scratched: false },
+    { num: 2, name: "Hillbilly Hippie", jockey: "M. McGuren", trainer: "C. Stables", weight: "57kg", odds: 4.60, scratched: false },
+    { num: 3, name: "Play It Cool", jockey: "C. Bellamy", trainer: "M. Wilson", weight: "59kg", odds: 5.50, scratched: false },
+    { num: 4, name: "Pressipitating", jockey: "L. Rolls", trainer: "B. Hayes", weight: "57kg", odds: 6.50, scratched: false },
+    { num: 5, name: "Noble Missile", jockey: "Raymond Spokes", trainer: "J. Smerdon", weight: "59kg", odds: 9.00, scratched: false },
+    { num: 6, name: "Northern Invader", jockey: "D. Peisley", trainer: "E. Ensby", weight: "59kg", odds: 15.00, scratched: false },
+    { num: 11, name: "Outback Bandit", jockey: "None", trainer: "T. Gollan", weight: "55kg", odds: 0, scratched: true }
+  ]},
+  { id: 902, venue: "Geelong", state: "VIC", raceNum: 1, name: "3Y Maiden Plate", time: "12:20", rating: "Soft 7", runners: [
+    { num: 1, name: "Circus Circus", jockey: "Zac Spain", trainer: "G. Eurell", weight: "58kg", odds: 2.90, scratched: false },
+    { num: 2, name: "Forward Ho", jockey: "J. Allen", trainer: "W. Morrissey", weight: "58kg", odds: 5.00, scratched: false },
+    { num: 3, name: "Jenni Poppins", jockey: "N. Farley", trainer: "C. Maher", weight: "58kg", odds: 6.00, scratched: false },
+    { num: 5, name: "Le Notre", jockey: "J. McNeil", trainer: "L. McGill", weight: "58kg", odds: 15.00, scratched: false },
+    { num: 8, name: "Sparkling Award", jockey: "J. Bowditch", trainer: "G. Bedggood", weight: "58kg", odds: 15.00, scratched: false },
+    { num: 4, name: "Karumba Girl", jockey: "W. Gordon", trainer: "L. Sullivan", weight: "58kg", odds: 41.00, scratched: false },
+    { num: 9, name: "Waggish", jockey: "C. Newitt", trainer: "P. Kearney", weight: "56kg", odds: 61.00, scratched: false },
+    { num: 6, name: "Miss Gossip Girl", jockey: "D. Bates", trainer: "A. Alexander", weight: "56kg", odds: 101.00, scratched: false },
+    { num: 7, name: "Oh So Vein", jockey: "None", trainer: "C. Maher", weight: "56kg", odds: 301.00, scratched: false }
+  ]},
+  { id: 903, venue: "Pakenham", state: "VIC", raceNum: 1, name: "Ladbrokes Maiden", time: "16:45", rating: "Soft 7", runners: [
+    { num: 1, name: "Geeseven", jockey: "Billy Egan", trainer: "Ciaron Maher", weight: "58kg", odds: 2.10, scratched: false },
+    { num: 3, name: "Aradeo", jockey: "Zac Spain", trainer: "M. Price Stables", weight: "58kg", odds: 2.70, scratched: false },
+    { num: 9, name: "Vespers", jockey: "Teo Nugent", trainer: "Ben Hayes", weight: "56kg", odds: 6.50, scratched: false },
+    { num: 5, name: "Ivy Princess", jockey: "Ruby Lamont", trainer: "Paul Robl", weight: "56kg", odds: 14.00, scratched: false },
+    { num: 2, name: "Let Lily Loose", jockey: "None", trainer: "Tony Gollan", weight: "56kg", odds: 0, scratched: true }
+  ]}
+];
+
+let selectedMeetingId = 901;
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderRaceStrip();
-  updateView();
+  if (liveAusFeed.length > 0) {
+    selectedMeetingId = liveAusFeed[0].id;
+  }
+  initLiveFeed();
 });
+
+function initLiveFeed() {
+  renderRaceStrip();
+  renderActiveField();
+}
 
 function renderRaceStrip() {
   const container = document.getElementById("raceStrip");
+  if (!container) return;
   container.innerHTML = "";
-  
-  appData.races.forEach(race => {
+
+  liveAusFeed.forEach((meeting) => {
     const chip = document.createElement("div");
-    chip.className = `race-chip ${race.id === appData.activeRaceId ? 'active' : ''}`;
-    
-    // Modern Event Listening API handles tap routing execution flawlessly on mobile browsers
+    chip.className = `race-chip ${meeting.id === selectedMeetingId ? 'active' : ''}`;
+
+    // Standard DOM Level 2 Event bindings bypass pre-paint string execution limits
     chip.addEventListener("click", () => {
       document.querySelectorAll(".race-chip").forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
-      appData.activeRaceId = race.id;
-      updateView();
+      selectedMeetingId = meeting.id;
+      renderActiveField();
     });
-    
+
     chip.innerHTML = `
-      <div class="rc-num">R${race.num}</div>
-      <div class="rc-time">${race.time}</div>
+      <div class="rc-venue">${meeting.venue} R${meeting.raceNum}</div>
+      <div class="rc-time">⏱️ ${meeting.time}</div>
     `;
     container.appendChild(chip);
   });
 }
 
-function updateView() {
-  const activeRace = appData.races.find(r => r.id === appData.activeRaceId);
-  if (!activeRace) return;
+function calculateWinProbabilities(runners) {
+  if (!runners || !Array.isArray(runners)) return [];
+  
+  let activeRunners = runners.filter(r => r && !r.scratched);
+  let scratchedRunners = runners.filter(r => r && r.scratched);
 
-  // Sync Header Status Text line elements
-  document.getElementById("trackBadge").innerText = `${activeRace.venue} · Race ${activeRace.num}`;
+  if (activeRunners.length === 0) {
+    return scratchedRunners.map(r => ({ ...r, finalProbability: "0.0" }));
+  }
 
-  const fieldContainer = document.getElementById("field");
-  fieldContainer.innerHTML = "";
-
-  // Step 1: Parse and store individual baseline market probability vectors (1 / odds)
-  const structuralProbabilities = activeRace.runners.map(horse => {
-    const rawOdds = parseFloat(horse.odds) || 10;
-    return {
-      ...horse,
-      rawProbValue: (1 / rawOdds) * 100
-    };
+  // Derive base inverse percentages from fixed decimals
+  let rawProbabilities = activeRunners.map(r => {
+    let price = parseFloat(r.odds) || 10;
+    return { ...r, baseProb: (1 / price) * 100 };
   });
 
-  // Step 2: Sum the field lines to pinpoint total bookmaker margin weights
-  const totalMarginWeight = structuralProbabilities.reduce((sum, h) => sum + h.rawProbValue, 0);
+  // Calculate strict market normalization margin pools
+  let sumTotal = rawProbabilities.reduce((acc, curr) => acc + curr.baseProb, 0) || 1;
+  
+  let finalActive = rawProbabilities.map(r => ({
+    ...r,
+    finalProbability: ((r.baseProb / sumTotal) * 100).toFixed(1)
+  })).sort((a, b) => parseFloat(b.finalProbability) - parseFloat(a.finalProbability));
 
-  // Step 3: Run normalization distribution loop so final outputs sum cleanly to exactly 100%
-  structuralProbabilities.forEach(horse => {
-    const cleanWinPercentage = ((horse.rawProbValue / totalMarginWeight) * 100).toFixed(1);
-    
+  let finalScratched = scratchedRunners.map(r => ({ ...r, finalProbability: "0.0" }));
+
+  return [...finalActive, ...finalScratched];
+}
+
+function renderActiveField() {
+  const targetMeeting = liveAusFeed.find(m => m.id === selectedMeetingId);
+  const fieldContainer = document.getElementById("field");
+  if (!fieldContainer || !targetMeeting) return;
+
+  // Render contextual status bars
+  document.getElementById("trackBadge").innerText = `${targetMeeting.venue.toUpperCase()} · R${targetMeeting.raceNum}`;
+  document.getElementById("liveRating").innerText = targetMeeting.rating || "Good 4";
+  fieldContainer.innerHTML = "";
+
+  const processedRunners = calculateWinProbabilities(targetMeeting.runners);
+
+  processedRunners.forEach((horse, idx) => {
     const card = document.createElement("div");
-    card.className = "horse-card";
-    card.innerHTML = `
-      <div class="hc-top">
-        <div class="hc-num">${horse.num}</div>
-        <div class="hc-info">
-          <div class="hc-name">${horse.name}</div>
-          <div class="hc-sub">Barrier ${horse.barrier} · ${horse.jockey} (${horse.weight})</div>
+    
+    if (horse.scratched) {
+      card.className = "horse-card scratched-mode";
+      card.innerHTML = `
+        <div class="hc-top">
+          <div class="hc-num">✕</div>
+          <div class="hc-info">
+            <div class="hc-name">${horse.name}</div>
+            <div class="hc-sub" style="color: var(--red); font-weight:600; letter-spacing:0.5px;">SCRATCHED</div>
+            <div class="hc-sub">Stable: ${horse.trainer || 'Unknown'}</div>
+          </div>
+          <div class="hc-right">
+            <div class="hc-odds" style="color:var(--text-dim); text-decoration:line-through;">$0.00</div>
+            <div class="hc-prob-badge hc-prob-scratch">0.0%</div>
+          </div>
         </div>
-        <div class="hc-right">
-          <div class="hc-odds">$${parseFloat(horse.odds).toFixed(2)}</div>
-          <div class="hc-pct-badge">${cleanWinPercentage}% Win</div>
+      `;
+    } else {
+      card.className = "horse-card";
+      // Highlight the math-calculated top runner with custom styling classes
+      const badgeClass = idx === 0 ? "hc-pct-badge hc-prob-high" : "hc-pct-badge";
+      let displayOdds = parseFloat(horse.odds) ? `$${parseFloat(horse.odds).toFixed(2)}` : 'NTD';
+      
+      card.innerHTML = `
+        <div class="hc-top">
+          <div class="hc-num">${horse.num || '?'}</div>
+          <div class="hc-info">
+            <div class="hc-name">${horse.name}</div>
+            <div class="hc-sub">T: ${horse.trainer || 'Unk'} · J: ${horse.jockey || 'Unk'} (${horse.weight || '56kg'})</div>
+          </div>
+          <div class="hc-right">
+            <div class="hc-odds">${displayOdds}</div>
+            <div class="${badgeClass}">${horse.finalProbability}%</div>
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    }
     fieldContainer.appendChild(card);
   });
 }
