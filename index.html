@@ -91,7 +91,6 @@ html, body {
   border: 1px solid var(--gold-dim);
   padding: 3px 8px;
   border-radius: 2px;
-  letter-spacing: .5px;
 }
 
 /* ── RACE STRIP ── */
@@ -117,7 +116,6 @@ html, body {
   border-radius: 6px;
   border: 1px solid var(--border);
   cursor: pointer;
-  transition: all .15s;
   background: var(--surface2);
   min-width: 65px;
 }
@@ -160,53 +158,33 @@ html, body {
 .cond-lbl {
   font-family: 'DM Mono', monospace;
   font-size: 8px;
-  letter-spacing: 1.5px;
   color: var(--text-dim);
   text-transform: uppercase;
   margin-bottom: 3px;
 }
 .cond-val { font-size: 13px; font-weight: 600; }
 .cv-good { color: var(--green); }
-.cv-fair { color: var(--gold); }
 
 /* ── SCROLL AREA ── */
 .scroll-area {
   flex: 1;
   overflow-y: auto;
-  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
 
-/* ── TAB BAR ── */
 .tab-bar {
-  display: flex;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 30;
-}
-.tab-bar::-webkit-scrollbar { display: none; }
-
-.tab {
-  flex-shrink: 0;
   padding: 12px 16px;
   font-size: 13px;
-  font-weight: 500;
-  color: var(--text-muted);
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all .15s;
+  font-weight: 600;
+  color: var(--gold);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
-.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-/* ── PANELS ── */
-.panel { display: none; padding: 12px 16px 80px; }
-.panel.active { display: block; }
+.panel { padding: 12px 16px 80px; }
 
 /* ── HORSE CARDS ── */
 .horse-card {
@@ -217,50 +195,44 @@ html, body {
   overflow: hidden;
 }
 
-.hc-top { display: flex; align-items: center; gap: 12px; padding: 14px 14px 10px; }
+.hc-top { display: flex; align-items: center; gap: 12px; padding: 14px; }
 .hc-num {
-  width: 40px; height: 40px;
+  width: 36px; height: 36px;
   background: var(--surface3);
   border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px; color: var(--gold);
+  font-size: 20px; color: var(--gold);
   flex-shrink: 0;
 }
 .hc-info { flex: 1; min-width: 0; }
-.hc-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); letter-spacing: .5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hc-name { font-family: 'Bebas Neue', sans-serif; font-size: 21px; color: var(--text); letter-spacing: .5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hc-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Score ring */
-.ring-wrap {
+.hc-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
   flex-shrink: 0;
-  position: relative;
-  width: 50px; height: 50px;
 }
-.ring-wrap svg { transform: rotate(-90deg); }
-.ring-inner {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 17px; color: var(--text);
+.hc-odds {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.hc-pct-badge {
+  background: rgba(61,186,126,.1);
+  color: var(--green);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(61,186,126,.15);
 }
 
-/* Mini badges */
-.hc-badges { display: flex; gap: 5px; padding: 0 14px 10px; flex-wrap: wrap; }
-.badge { font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 7px; border-radius: 3px; }
-.b-fit  { background: rgba(61,186,126,.1);  color: var(--green); }
-.b-jock { background: rgba(155,127,240,.1); color: var(--purple); }
-.b-odds { background: rgba(201,168,76,.08); color: var(--gold-light); }
-
-/* Bars */
-.hc-bars { padding: 0 14px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
-.bar-lbl { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
-.bar-track { height: 4px; background: var(--surface3); border-radius: 2px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 2px; }
-.bf-green  { background: var(--green); }
-.bf-gold   { background: var(--gold); }
-
-/* Bottom Nav */
+/* ── BOTTOM NAV ── */
 .bottom-nav {
   flex-shrink: 0;
   display: flex;
@@ -268,8 +240,6 @@ html, body {
   border-top: 1px solid var(--border);
   padding-bottom: var(--safe-bottom);
   height: calc(var(--nav-h) + var(--safe-bottom));
-  position: relative;
-  z-index: 50;
   backdrop-filter: blur(12px);
 }
 
@@ -280,13 +250,10 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 3px;
-  cursor: pointer;
-  padding-top: 6px;
+  color: var(--gold);
 }
-.nav-item.active { border-top: 2px solid var(--gold); }
-.nav-icon { font-size: 20px; line-height: 1; }
-.nav-lbl { font-size: 10px; color: var(--text-dim); }
-.nav-item.active .nav-lbl { color: var(--gold); }
+.nav-icon { font-size: 20px; }
+.nav-lbl { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
 </style>
 </head>
 <body>
@@ -294,7 +261,7 @@ html, body {
 
   <div class="topbar">
     <div class="logo"><div class="logo-dot"></div>TurfIQ</div>
-    <div class="track-badge" id="trackBadge">Randwick · R4</div>
+    <div class="track-badge" id="trackBadge">LOADING...</div>
   </div>
 
   <div class="race-strip" id="raceStrip"></div>
@@ -303,57 +270,61 @@ html, body {
     <div class="cond-cell"><div class="cond-lbl">Track</div><div class="cond-val cv-good">Good 4</div></div>
     <div class="cond-cell"><div class="cond-lbl">Weather</div><div class="cond-val">☀️ 18°C</div></div>
     <div class="cond-cell"><div class="cond-lbl">Wind</div><div class="cond-val">12km/h W</div></div>
-    <div class="cond-cell"><div class="cond-lbl">Rail</div><div class="cond-val cv-fair">+3m</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Model</div><div class="cond-val" style="color: var(--blue);">Normalized</div></div>
   </div>
 
   <div class="scroll-area">
-    <div class="tab-bar">
-      <div class="tab active" id="tab-field" onclick="switchTab('field')">Field</div>
-      <div class="tab" id="tab-jockeys" onclick="switchTab('jockeys')">Jockeys</div>
-    </div>
-
+    <div class="tab-bar">Live Field Summary</div>
     <div id="field" class="panel active"></div>
-
-    <div id="jockeys" class="panel">
-      <div style="padding: 30px 20px; color: var(--text-muted); text-align: center; font-size: 14px;">
-        Premium Jockey analytical performance tracks loaded successfully.
-      </div>
-    </div>
   </div>
 
   <div class="bottom-nav">
-    <div class="nav-item active" id="nav-field" onclick="switchTab('field')">
+    <div class="nav-item">
       <span class="nav-icon">📋</span>
-      <span class="nav-lbl">Field</span>
-    </div>
-    <div class="nav-item" id="nav-jockeys" onclick="switchTab('jockeys')">
-      <span class="nav-icon">✨</span>
-      <span class="nav-lbl">Profiles</span>
+      <span class="nav-lbl">Dynamic Field</span>
     </div>
   </div>
 
 </div>
 
 <script>
+// Multidimensional Race Database Array Framework
 const appData = {
-  activeRace: 4,
+  activeRaceId: 104,
   races: [
-    { num: 1, time: "12:15" },
-    { num: 2, time: "12:50" },
-    { num: 3, time: "13:25" },
-    { num: 4, time: "14:00" },
-    { num: 5, time: "14:40" }
-  ],
-  horses: [
-    { num: 1, name: "Thunder Road", jockey: "J. McDonald", barrier: 4, weight: "58kg", score: 94, odds: "2.80", speed: 90, form: 85 },
-    { num: 2, name: "Desert Orchid", jockey: "J. Collett", barrier: 9, weight: "56.5kg", score: 88, odds: "5.50", speed: 82, form: 90 },
-    { num: 3, name: "Alchemist", jockey: "B. Avdulla", barrier: 2, weight: "55kg", score: 81, odds: "7.00", speed: 88, form: 74 }
+    { id: 101, num: 1, venue: "Randwick", time: "12:15", runners: [
+      { num: 1, name: "Alpha Flight", jockey: "B. Shinn", barrier: 2, weight: "59kg", odds: 2.20 },
+      { num: 2, name: "Storm Boy", jockey: "J. McDonald", barrier: 5, weight: "56.5kg", odds: 3.50 },
+      { num: 3, name: "Red Resistance", jockey: "T. Clark", barrier: 1, weight: "56kg", odds: 4.80 }
+    ]},
+    { id: 102, num: 2, venue: "Randwick", time: "12:50", runners: [
+      { num: 1, name: "Fangirl", jockey: "J. McDonald", barrier: 4, weight: "57kg", odds: 1.80 },
+      { num: 2, name: "Mililitia", jockey: "C. Williams", barrier: 3, weight: "55kg", odds: 5.50 },
+      { num: 3, name: "Hindquarter", jockey: "N. Rawiller", barrier: 7, weight: "59kg", odds: 9.00 },
+      { num: 4, name: "Zardozi", jockey: "Z. Purton", barrier: 1, weight: "54.5kg", odds: 12.00 }
+    ]},
+    { id: 103, num: 3, venue: "Randwick", time: "13:25", runners: [
+      { num: 1, name: "Think About It", jockey: "S. Clipperton", barrier: 3, weight: "58.5kg", odds: 2.05 },
+      { num: 2, name: "Hawaii Five O", jockey: "N. Rawiller", barrier: 6, weight: "58.5kg", odds: 4.20 },
+      { num: 3, name: "Bella Nipotina", jockey: "C. Williams", barrier: 2, weight: "56.5kg", odds: 6.50 }
+    ]},
+    { id: 104, num: 4, venue: "Randwick", time: "14:00", runners: [
+      { num: 1, name: "Thunder Road", jockey: "J. McDonald", barrier: 4, weight: "58kg", odds: 2.80 },
+      { num: 2, name: "Desert Orchid", jockey: "J. Collett", barrier: 9, weight: "56.5kg", odds: 5.50 },
+      { num: 3, name: "Alchemist", jockey: "B. Avdulla", barrier: 2, weight: "55kg", odds: 7.00 },
+      { num: 4, name: "Velvet Steel", jockey: "T. Berry", barrier: 6, weight: "54kg", odds: 11.00 }
+    ]},
+    { id: 105, num: 5, venue: "Randwick", time: "14:40", runners: [
+      { num: 1, name: "Imperatriz", jockey: "O. Bosson", barrier: 4, weight: "56.5kg", odds: 1.65 },
+      { num: 2, name: "Private Eye", jockey: "N. Rawiller", barrier: 1, weight: "58.5kg", odds: 4.60 },
+      { num: 3, name: "Buenos Noches", jockey: "D. Gibbons", barrier: 8, weight: "58.5kg", odds: 13.00 }
+    ]}
   ]
 };
 
 document.addEventListener("DOMContentLoaded", () => {
   renderRaceStrip();
-  renderField();
+  updateView();
 });
 
 function renderRaceStrip() {
@@ -362,18 +333,15 @@ function renderRaceStrip() {
   
   appData.races.forEach(race => {
     const chip = document.createElement("div");
-    // Explicitly add an ID matching the index to bypass element hunting bugs
-    chip.id = `race-chip-${race.num}`;
-    chip.className = `race-chip ${race.num === appData.activeRace ? 'active' : ''}`;
+    chip.className = `race-chip ${race.id === appData.activeRaceId ? 'active' : ''}`;
     
-    chip.onclick = () => {
-      // Clear active style on all chips explicitly
+    // Modern Event Listening API handles tap routing execution flawlessly on mobile browsers
+    chip.addEventListener("click", () => {
       document.querySelectorAll(".race-chip").forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
-      
-      appData.activeRace = race.num;
-      document.getElementById("trackBadge").innerText = `Randwick · R${race.num}`;
-    };
+      appData.activeRaceId = race.id;
+      updateView();
+    });
     
     chip.innerHTML = `
       <div class="rc-num">R${race.num}</div>
@@ -383,11 +351,32 @@ function renderRaceStrip() {
   });
 }
 
-function renderField() {
+function updateView() {
+  const activeRace = appData.races.find(r => r.id === appData.activeRaceId);
+  if (!activeRace) return;
+
+  // Sync Header Status Text line elements
+  document.getElementById("trackBadge").innerText = `${activeRace.venue} · Race ${activeRace.num}`;
+
   const fieldContainer = document.getElementById("field");
   fieldContainer.innerHTML = "";
 
-  appData.horses.forEach(horse => {
+  // Step 1: Parse and store individual baseline market probability vectors (1 / odds)
+  const structuralProbabilities = activeRace.runners.map(horse => {
+    const rawOdds = parseFloat(horse.odds) || 10;
+    return {
+      ...horse,
+      rawProbValue: (1 / rawOdds) * 100
+    };
+  });
+
+  // Step 2: Sum the field lines to pinpoint total bookmaker margin weights
+  const totalMarginWeight = structuralProbabilities.reduce((sum, h) => sum + h.rawProbValue, 0);
+
+  // Step 3: Run normalization distribution loop so final outputs sum cleanly to exactly 100%
+  structuralProbabilities.forEach(horse => {
+    const cleanWinPercentage = ((horse.rawProbValue / totalMarginWeight) * 100).toFixed(1);
+    
     const card = document.createElement("div");
     card.className = "horse-card";
     card.innerHTML = `
@@ -395,49 +384,16 @@ function renderField() {
         <div class="hc-num">${horse.num}</div>
         <div class="hc-info">
           <div class="hc-name">${horse.name}</div>
-          <div class="hc-sub">Barrier ${horse.barrier} · ${horse.jockey} · ${horse.weight}</div>
+          <div class="hc-sub">Barrier ${horse.barrier} · ${horse.jockey} (${horse.weight})</div>
         </div>
-        <div class="ring-wrap">
-          <svg width="50" height="50">
-            <circle cx="25" cy="25" r="21" stroke="#242729" stroke-width="3" fill="none" />
-            <circle cx="25" cy="25" r="21" stroke="var(--gold)" stroke-width="3" fill="none" 
-              stroke-dasharray="132" stroke-dashoffset="${132 - (132 * horse.score) / 100}" />
-          </svg>
-          <div class="ring-inner">${horse.score}</div>
-        </div>
-      </div>
-      <div class="hc-badges">
-        <span class="badge b-odds">$${horse.odds}</span>
-        <span class="badge b-fit">Fit</span>
-        <span class="badge b-jock">${horse.jockey.split(' ')[1] || horse.jockey}</span>
-      </div>
-      <div class="hc-bars">
-        <div>
-          <div class="bar-lbl"><span>Speed</span><span>${horse.speed}</span></div>
-          <div class="bar-track"><div class="bar-fill bf-green" style="width: ${horse.speed}%"></div></div>
-        </div>
-        <div>
-          <div class="bar-lbl"><span>Form</span><span>${horse.form}</span></div>
-          <div class="bar-track"><div class="bar-fill bf-gold" style="width: ${horse.form}%"></div></div>
+        <div class="hc-right">
+          <div class="hc-odds">$${parseFloat(horse.odds).toFixed(2)}</div>
+          <div class="hc-pct-badge">${cleanWinPercentage}% Win</div>
         </div>
       </div>
     `;
     fieldContainer.appendChild(card);
   });
-}
-
-function switchTab(tabId) {
-  // Direct ID hide/show mapping routes
-  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-  document.getElementById(tabId).classList.add("active");
-
-  // Reset top bar sub-tab elements explicitly
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  document.getElementById(`tab-${tabId}`).classList.add("active");
-
-  // Reset bottom panel action navigation links explicitly
-  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-  document.getElementById(`nav-${tabId}`).classList.add("active");
 }
 </script>
 </body>
