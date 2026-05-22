@@ -45,6 +45,7 @@ html, body {
   flex-direction: column;
   height: 100%;
   height: 100dvh;
+  position: relative;
 }
 
 /* ── TOP BAR ── */
@@ -57,7 +58,6 @@ html, body {
   height: 52px;
   background: rgba(13,14,15,0.97);
   border-bottom: 1px solid var(--border);
-  position: relative;
   z-index: 50;
 }
 
@@ -76,7 +76,6 @@ html, body {
   background: var(--green);
   border-radius: 50%;
   animation: pulse 2s ease-in-out infinite;
-  flex-shrink: 0;
 }
 
 @keyframes pulse {
@@ -92,7 +91,6 @@ html, body {
   border: 1px solid var(--gold-dim);
   padding: 3px 8px;
   border-radius: 2px;
-  letter-spacing: .5px;
 }
 
 /* ── STATE FILTER STRIP ── */
@@ -150,7 +148,6 @@ html, body {
   cursor: pointer;
   background: var(--surface2);
   min-width: 125px;
-  transition: all 0.15s ease;
 }
 .race-chip.active {
   border-color: var(--gold);
@@ -176,7 +173,6 @@ html, body {
   font-size: 10px;
   color: var(--text-muted);
   margin-top: 3px;
-  font-weight: 500;
 }
 
 /* ── CONDITIONS ROW ── */
@@ -203,10 +199,46 @@ html, body {
 .cond-val { font-size: 13px; font-weight: 600; margin-top: 1px;}
 .cv-good { color: var(--green); }
 
+/* ── PULL TO REFRESH INDICATION CONTAINER ── */
+.ptr-container {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+.ptr-indicator {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+  transition: transform 0.15s ease;
+}
+.ptr-dot {
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+.ptr-indicator.loading .ptr-dot {
+  animation: ptrSpin 0.6s linear infinite;
+  background: var(--green);
+}
+@keyframes ptrSpin {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.6); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 /* ── SCROLL AREA ── */
 .scroll-area {
-  flex: 1;
+  height: 100%;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  transition: transform 0.15s ease;
 }
 
 /* ── TAB BAR ── */
@@ -232,8 +264,7 @@ html, body {
 }
 .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-.panel { display: none; padding: 12px 16px 80px; }
-.panel.active { display: block; }
+.panel { padding: 12px 16px 120px; }
 
 /* ── HORSE CARDS ── */
 .horse-card {
@@ -244,8 +275,8 @@ html, body {
   overflow: hidden;
 }
 .horse-card.scratched-mode {
-  border-color: rgba(224, 85, 85, 0.4);
-  background: rgba(224, 85, 85, 0.02);
+  border-color: rgba(224, 85, 85, 0.25);
+  background: rgba(224, 85, 85, 0.01);
 }
 .hc-top { display: flex; align-items: center; gap: 12px; padding: 14px; }
 .hc-num {
@@ -257,13 +288,12 @@ html, body {
   font-size: 20px; color: var(--gold);
 }
 .scratched-mode .hc-num {
-  background: rgba(224, 85, 85, 0.15);
+  background: rgba(224, 85, 85, 0.1);
   color: var(--red);
-  font-weight: bold;
 }
 .hc-info { flex: 1; min-width: 0; }
 .hc-name { font-family: 'Bebas Neue', sans-serif; font-size: 21px; letter-spacing: .5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.scratched-mode .hc-name { color: var(--red); text-decoration: line-through; opacity: 0.7; }
+.scratched-mode .hc-name { color: var(--red); text-decoration: line-through; opacity: 0.5; }
 .hc-sub { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
 .hc-metrics-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
 .hc-odds { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted); font-weight: 500; }
@@ -279,8 +309,7 @@ html, body {
 }
 .hc-prob-scratch {
   background: var(--red-dim); color: var(--red);
-  border-color: rgba(224, 85, 85, 0.3);
-  font-weight: 700;
+  border-color: rgba(224, 85, 85, 0.2);
 }
 
 /* ── BOTTOM NAV ── */
@@ -292,6 +321,7 @@ html, body {
   padding-bottom: var(--safe-bottom);
   height: calc(var(--nav-h) + var(--safe-bottom));
   backdrop-filter: blur(12px);
+  z-index: 50;
 }
 .nav-item {
   flex: 1; display: flex; flex-direction: column;
@@ -315,7 +345,7 @@ html, body {
   <!-- STATE SELECTION FILTER STRIP -->
   <div class="state-strip" id="stateStrip">
     <div class="state-btn active" onclick="filterState('ALL')">ALL AUS</div>
-    <div class="state-btn" onclick="filterState('NSW')">NSW / ACT</div>
+    <div class="state-btn" onclick="filterState('NSW')">NSW</div>
     <div class="state-btn" onclick="filterState('VIC')">VIC</div>
     <div class="state-btn" onclick="filterState('QLD')">QLD</div>
   </div>
@@ -326,31 +356,34 @@ html, body {
   <!-- DYNAMIC TRACK CONDITIONS -->
   <div class="cond-row">
     <div class="cond-cell"><div class="cond-lbl">Track Rating</div><div class="cond-val cv-good" id="liveRating">Soft 7</div></div>
-    <div class="cond-cell"><div class="cond-lbl">Scratchings</div><div class="cond-val" style="color:var(--red);">Retained Red</div></div>
-    <div class="cond-cell"><div class="cond-lbl">Engine Status</div><div class="cond-val" style="color:var(--green);">Stable</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Scratchings</div><div class="cond-val" style="color:var(--red);">Visible (0%)</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Refresh Feed</div><div class="cond-val" style="color:var(--blue);">Pull Down Content</div></div>
   </div>
 
-  <!-- SCROLLABLE INTERFACE -->
-  <div class="scroll-area">
-    <div class="tab-bar">
-      <div class="tab active">Field Win-Chance Assessment</div>
-    </div>
-
-    <div id="field" class="panel active">
-      <!-- Dynamic Predictive Cards Rendered Here -->
+  <!-- REFRESHABLE VIEWPORT INTERFACE CONTAINER -->
+  <div class="ptr-container">
+    <div class="ptr-indicator" id="ptrIndicator"><div class="ptr-dot"></div></div>
+    
+    <div class="scroll-area" id="scrollArea">
+      <div class="tab-bar">
+        <div class="tab active">Predictive Win-Chance Distribution</div>
+      </div>
+      <div id="field" class="panel">
+        <!-- Injected dynamically by execution script -->
+      </div>
     </div>
   </div>
 
   <!-- BOTTOM NAVIGATION BAR -->
   <div class="bottom-nav">
-    <div class="nav-item active"><span class="nav-icon">📋</span><span class="nav-lbl">Swipe Strip</span></div>
-    <div class="nav-item" onclick="alert('System calculation matrices verified.')"><span class="nav-icon">⚡</span><span class="nav-lbl">Sync Feed</span></div>
+    <div class="nav-item active"><span class="nav-icon">📋</span><span class="nav-lbl">Time Ordered</span></div>
+    <div class="nav-item" onclick="simulatePullRefresh()"><span class="nav-icon">⚡</span><span class="nav-lbl">Manual Sync</span></div>
   </div>
 
 </div>
 
 <script>
-// Verified Australian Dataset Array
+// Verified Australian Dataset Array Object Blueprints
 const liveAusFeed = [
   { id: 901, venue: "Inverell", state: "NSW", raceNum: 1, name: "Maiden Plate", date: "Fri 22 May", time: "12:10", isoString: "2026-05-22T12:10:00", rating: "Soft 6", runners: [
     { num: 1, name: "More Than A Star", jockey: "Ben Looker", trainer: "Brett Cavanough", weight: "59kg", odds: 2.15, wetTrackForm: "Strong", scratched: false },
@@ -384,27 +417,39 @@ const liveAusFeed = [
 let currentFilter = "ALL";
 let selectedMeetingId = 901;
 
+// Touch tracking storage configuration states
+let touchStartKeyY = 0;
+let touchMoveCurrentY = 0;
+let isViewPullActive = false;
+
 document.addEventListener("DOMContentLoaded", () => {
   sortFeedChronologically();
   initLiveFeed();
+  setupPullToRefreshTouchHandlers();
 });
 
 function sortFeedChronologically() {
   liveAusFeed.sort((a, b) => new Date(a.isoString) - new Date(b.isoString));
-  if(liveAusFeed.length > 0) selectedMeetingId = liveAusFeed[0].id;
+  if (liveAusFeed.length > 0) selectedMeetingId = liveAusFeed[0].id;
+}
+
+function initLiveFeed() {
+  renderRaceStrip();
+  renderActiveField();
 }
 
 function filterState(state) {
   currentFilter = state;
   document.querySelectorAll(".state-btn").forEach(btn => {
     btn.classList.remove("active");
-    if(btn.innerText.includes(state)) btn.classList.add("active");
+    if (btn.innerText.includes(state)) btn.classList.add("active");
   });
   renderRaceStrip(true); 
 }
 
 function renderRaceStrip(resetSelection = false) {
   const container = document.getElementById("raceStrip");
+  if (!container) return;
   container.innerHTML = "";
 
   const filteredMeetings = liveAusFeed.filter(m => {
@@ -415,7 +460,7 @@ function renderRaceStrip(resetSelection = false) {
 
   if (filteredMeetings.length === 0) {
     container.innerHTML = `<div style="font-size:11px; color:var(--text-dim); padding:6px; white-space:nowrap;">No fields open.</div>`;
-    document.getElementById("field").innerHTML = `<div style="color:var(--text-muted); text-align:center; padding-top:40px;">No fields found.</div>`;
+    document.getElementById("field").innerHTML = `<div style="color:var(--text-muted); text-align:center; padding-top:40px;">No upcoming fields.</div>`;
     return;
   }
 
@@ -448,8 +493,10 @@ function renderRaceStrip(resetSelection = false) {
 }
 
 function calculateWinProbabilities(runners, trackRating) {
-  let activeRunners = runners.filter(r => !r.scratched);
-  let scratchedRunners = runners.filter(r => r.scratched);
+  if (!runners || !Array.isArray(runners)) return [];
+  
+  let activeRunners = runners.filter(r => r && !r.scratched);
+  let scratchedRunners = runners.filter(r => r && r.scratched);
 
   if (activeRunners.length === 0) {
     return scratchedRunners.map(r => ({ ...r, finalProbability: "0.0" }));
@@ -499,12 +546,11 @@ function calculateWinProbabilities(runners, trackRating) {
 
 function renderActiveField() {
   const targetMeeting = liveAusFeed.find(m => m.id === selectedMeetingId);
-  if (!targetMeeting) return;
+  const fieldContainer = document.getElementById("field");
+  if (!fieldContainer || !targetMeeting) return;
 
   document.getElementById("trackBadge").innerText = `${targetMeeting.date.toUpperCase()} · ${targetMeeting.venue.toUpperCase()} · R${targetMeeting.raceNum}`;
   document.getElementById("liveRating").innerText = targetMeeting.rating || "Good 4";
-
-  const fieldContainer = document.getElementById("field");
   fieldContainer.innerHTML = "";
 
   const processedRunners = calculateWinProbabilities(targetMeeting.runners, targetMeeting.rating);
@@ -524,32 +570,11 @@ function renderActiveField() {
           </div>
           <div class="hc-metrics-wrap">
             <div class="hc-odds" style="color:var(--text-dim); text-decoration:line-through;">$0.00</div>
-            <div class="hc-prob-badge hc-prob-scratch">0.0% Chance</div>
+            <div class="hc-prob-badge hc-prob-scratch">0.0%</div>
           </div>
         </div>
       `;
     } else {
       card.className = "horse-card";
       const badgeClass = idx === 0 ? "hc-prob-badge hc-prob-high" : "hc-prob-badge";
-      let displayOdds = parseFloat(horse.odds) ? `$${parseFloat(horse.odds).toFixed(2)}` : 'NTD';
-      card.innerHTML = `
-        <div class="hc-top">
-          <div class="hc-num">${horse.num || '?'}</div>
-          <div class="hc-info">
-            <div class="hc-name">${horse.name}</div>
-            <div class="hc-sub">T: ${horse.trainer || 'Unk'} · J: ${horse.jockey || 'Unk'} (${horse.weight || '56kg'})</div>
-            <div class="hc-sub" style="color: var(--text-muted); font-size:10px;">Wet Form Profile: ${horse.wetTrackForm || 'Moderate'}</div>
-          </div>
-          <div class="hc-metrics-wrap">
-            <div class="hc-odds">${displayOdds}</div>
-            <div class="${badgeClass}">${horse.finalProbability}% Chance</div>
-          </div>
-        </div>
-      `;
-    }
-    fieldContainer.appendChild(card);
-  });
-}
-</script>
-</body>
-</html>
+      let displayOdds = parseFloat(horse.odds) ? `$${
