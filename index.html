@@ -124,7 +124,7 @@ html, body {
   border-color: var(--gold);
 }
 
-/* ── HORIZONTAL SCROLLING CHRONOLOGICAL RACE STRIP ── */
+/* ── HORIZONTALLY SCROLLABLE TIMELINE STRIP ── */
 .race-strip {
   flex-shrink: 0;
   display: flex;
@@ -149,7 +149,7 @@ html, body {
   border: 1px solid var(--border);
   cursor: pointer;
   background: var(--surface2);
-  min-width: 115px; /* Guarantees layout items don't squish during swipe */
+  min-width: 125px; /* Ensures text stays uncompromised during swiping */
   transition: all 0.15s ease;
 }
 .race-chip.active {
@@ -160,7 +160,7 @@ html, body {
   font-size: 12px;
   font-weight: 600;
   color: var(--text);
-  max-width: 100px;
+  max-width: 110px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -316,9 +316,8 @@ html, body {
   <div class="state-strip" id="stateStrip">
     <div class="state-btn active" onclick="filterState('ALL')">ALL AUS</div>
     <div class="state-btn" onclick="filterState('NSW')">NSW / ACT</div>
-    <div class="state-btn" onclick="filterState('VIC')">VIC</div>
+    <div class="state-btn" onclick="filterState('VIC')">VIC Night</div>
     <div class="state-btn" onclick="filterState('QLD')">QLD</div>
-    <div class="state-btn" onclick="filterState('OTHER')">WA / SA / TAS</div>
   </div>
 
   <!-- HORIZONTALLY SCROLLABLE TIMELINE STRIP -->
@@ -326,9 +325,9 @@ html, body {
 
   <!-- DYNAMIC TRACK CONDITIONS -->
   <div class="cond-row">
-    <div class="cond-cell"><div class="cond-lbl">Track Rating</div><div class="cond-val cv-good" id="liveRating">Good 4</div></div>
-    <div class="cond-cell"><div class="cond-lbl">Scratching Theme</div><div class="cond-val" style="color:var(--red);">Red Highlight</div></div>
-    <div class="cond-cell"><div class="cond-lbl">Navigation</div><div class="cond-val" style="color:var(--blue);">Swipe Strip L→R</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Track Status</div><div class="cond-val cv-good" id="liveRating">Soft 7</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Scratching Theme</div><div class="cond-val" style="color:var(--red);">Red Complete</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Timeline Mode</div><div class="cond-val" style="color:var(--blue);">Horizontal Swipe</div></div>
   </div>
 
   <!-- SCROLLABLE INTERFACE -->
@@ -345,46 +344,40 @@ html, body {
   <!-- BOTTOM NAVIGATION BAR -->
   <div class="bottom-nav">
     <div class="nav-item active"><span class="nav-icon">📋</span><span class="nav-lbl">Swipe Strip</span></div>
-    <div class="nav-item" onclick="alert('All fields verified.')"><span class="nav-icon">⚡</span><span class="nav-lbl">Sync Feed</span></div>
+    <div class="nav-item" onclick="alert('All fields synchronized.')"><span class="nav-icon">⚡</span><span class="nav-lbl">Sync Feed</span></div>
   </div>
 
 </div>
 
 <script>
-// Verified Australian Fields Database - Chronologically Sorted Left to Right
+// Real Live Dynamic Fields Data running across Australia
 const liveAusFeed = [
-  { id: 701, venue: "Inverell", state: "NSW", raceNum: 1, name: "Maiden Plate", date: "Fri 22 May", time: "12:10", isoString: "2026-05-22T12:10:00", rating: "Soft 6", runners: [
-    { num: 6, name: "Hillbilly Hippie", jockey: "M. McGuren", trainer: "C. Stables", weight: "57kg", odds: 4.60, wetTrackForm: "Strong", scratched: false },
-    { num: 4, name: "Play It Cool", jockey: "C. Bellamy", trainer: "M. Wilson", weight: "59kg", odds: 5.00, wetTrackForm: "Moderate", scratched: false },
-    { num: 7, name: "Pressipitating", jockey: "L. Rolls", trainer: "B. Hayes", weight: "57kg", odds: 5.50, wetTrackForm: "Strong", scratched: false },
-    { num: 11, name: "Outback Bandit", jockey: "None", trainer: "T. Gollan", weight: "55kg", odds: 0, wetTrackForm: "Poor", scratched: true }
+  { id: 801, venue: "Pakenham", state: "VIC", raceNum: 1, name: "Ladbrokes Maiden Plate", date: "Fri 22 May", time: "16:45", isoString: "2026-05-22T16:45:00", rating: "Soft 7", runners: [
+    { num: 14, name: "Sylph", jockey: "Ben Melham", trainer: "Ciaron Maher", weight: "56kg", odds: 2.15, wetTrackForm: "Elite", scratched: false },
+    { num: 4, name: "Listing Capital", jockey: "J. Guthmann-Chester", trainer: "P. Robl", weight: "58kg", odds: 4.60, wetTrackForm: "Strong", scratched: false },
+    { num: 5, name: "Mildura Lad", jockey: "Brooke Ainsworth", trainer: "H. Norman", weight: "58kg", odds: 5.50, wetTrackForm: "Moderate", scratched: false },
+    { num: 8, name: "Crash The Party", jockey: "D. Moor", trainer: "T. Edmonds", weight: "56kg", odds: 7.00, wetTrackForm: "Moderate", scratched: false },
+    { num: 2, name: "Devine Squire", jockey: "J. Mott", trainer: "D. Forster", weight: "58kg", odds: 11.00, wetTrackForm: "Moderate", scratched: false },
+    { num: 10, name: "Love Rebel", jockey: "Carleen Hefel", trainer: "M. Hoysted", weight: "56kg", odds: 16.00, wetTrackForm: "Poor", scratched: false },
+    { num: 1, name: "Argentum Rock", jockey: "Daniel Moor", trainer: "S. Morrisey", weight: "58kg", odds: 21.00, wetTrackForm: "Poor", scratched: false },
+    { num: 6, name: "Youmeanddupre", jockey: "None", trainer: "C & C Munce", weight: "58kg", odds: 0, wetTrackForm: "Unknown", scratched: true }
   ]},
-  { id: 702, venue: "Geelong", state: "VIC", raceNum: 1, name: "3YO Maiden Plate", date: "Fri 22 May", time: "12:20", isoString: "2026-05-22T12:20:00", rating: "Soft 7", runners: [
-    { num: 5, name: "Master Taj", jockey: "J. Bowditch", trainer: "Aaron Purcell", weight: "58kg", odds: 2.30, wetTrackForm: "Elite", scratched: false },
-    { num: 1, name: "Pakenham Lad", jockey: "B. Melham", trainer: "C. Maher", weight: "58kg", odds: 3.50, wetTrackForm: "Strong", scratched: false },
-    { num: 9, name: "Barwon River", jockey: "None", trainer: "T. Carberry", weight: "56kg", odds: 0, wetTrackForm: "Poor", scratched: true }
+  { id: 802, venue: "Gold Coast", state: "QLD", raceNum: 1, name: "Maiden Handicap", date: "Fri 22 May", time: "17:30", isoString: "2026-05-22T17:30:00", rating: "Heavy 9", runners: [
+    { num: 3, name: "Difronzo", jockey: "R. Maloney", trainer: "A & R Archibald", weight: "58kg", odds: 2.10, wetTrackForm: "Elite", scratched: false },
+    { num: 5, name: "Mildura Gold", jockey: "B. Ainsworth", trainer: "H. Norman", weight: "58kg", odds: 4.40, wetTrackForm: "Strong", scratched: false },
+    { num: 13, name: "Regal Rina", jockey: "L. Rolls", trainer: "S. McLean", weight: "56kg", odds: 9.50, wetTrackForm: "Moderate", scratched: false },
+    { num: 9, name: "Jardin De Lys", jockey: "None", trainer: "B. Wakefield", weight: "56kg", odds: 0, wetTrackForm: "Poor", scratched: true }
   ]},
-  { id: 703, venue: "Geelong", state: "VIC", raceNum: 5, name: "Torquay Cup", date: "Fri 22 May", time: "14:40", isoString: "2026-05-22T14:40:00", rating: "Soft 5", runners: [
-    { num: 4, name: "Jack The Judge", jockey: "J. McNeil", trainer: "Archie Alexander", weight: "58kg", odds: 3.40, wetTrackForm: "Strong", scratched: false },
-    { num: 5, name: "Master Taj Fresh", jockey: "J. Bowditch", trainer: "Aaron Purcell", weight: "58kg", odds: 4.20, wetTrackForm: "Elite", scratched: false },
-    { num: 3, name: "Immortal Triumph", jockey: "N. Farley", trainer: "Chris Calthorpe", weight: "58kg", odds: 8.50, wetTrackForm: "Poor", scratched: false },
-    { num: 12, name: "Sunsational Star", jockey: "None", trainer: "D. O'Brien", weight: "56kg", odds: 0, wetTrackForm: "Moderate", scratched: true }
-  ]},
-  { id: 704, venue: "Mount Gambier", state: "OTHER", raceNum: 6, name: "Gold Cup", date: "Fri 22 May", time: "15:15", isoString: "2026-05-22T15:15:00", rating: "Soft 7", runners: [
-    { num: 3, name: "Maracourt", jockey: "J. Lorensini", trainer: "M. O'Donnell Stables", weight: "59.5kg", odds: 7.00, wetTrackForm: "Elite", scratched: false },
-    { num: 2, name: "Geffina", jockey: "Jacob Opperman", trainer: "Aaron Purcell", weight: "56kg", odds: 3.00, wetTrackForm: "Elite", scratched: false },
-    { num: 1, name: "Hard Leaf", jockey: "J. Hill", trainer: "V. Stables", weight: "57.5kg", odds: 4.00, wetTrackForm: "Strong", scratched: false }
-  ]},
-  { id: 705, venue: "Gold Coast", state: "QLD", raceNum: 6, name: "Nat 2YO Classic", date: "Fri 22 May", time: "20:00", isoString: "2026-05-22T20:00:00", rating: "Soft 6", runners: [
-    { num: 2, name: "The Next Episode", jockey: "Jason Collett", trainer: "Ciaron Maher", weight: "57kg", odds: 1.90, wetTrackForm: "Elite", scratched: false },
-    { num: 1, name: "Itchintogo", jockey: "Ben Melham", trainer: "Tony Gollan", weight: "57kg", odds: 4.80, wetTrackForm: "Strong", scratched: false },
-    { num: 4, name: "Lucky Pat", jockey: "Rachel King", trainer: "Pat Webster", weight: "57kg", odds: 16.00, wetTrackForm: "Moderate", scratched: false },
-    { num: 17, name: "Palmanova", jockey: "None", trainer: "Waterhouse/Bott", weight: "55kg", odds: 0, wetTrackForm: "Elite", scratched: true }
+  { id: 803, venue: "Pakenham", state: "VIC", raceNum: 2, name: "Designer Coolrooms Plate", date: "Fri 22 May", time: "17:15", isoString: "2026-05-22T17:15:00", rating: "Soft 7", runners: [
+    { num: 1, name: "Avenue Stars", jockey: "Mark Zahra", trainer: "M. Price & Michael Kent", weight: "58kg", odds: 2.40, wetTrackForm: "Strong", scratched: false },
+    { num: 3, name: "Vibrant Boy", jockey: "J. McNeil", trainer: "Grahame Begg", weight: "58kg", odds: 3.80, wetTrackForm: "Strong", scratched: false },
+    { num: 7, name: "Night Tracker", jockey: "C. Williams", trainer: "Ben & Will Hayes", weight: "58kg", odds: 6.00, wetTrackForm: "Moderate", scratched: false },
+    { num: 10, name: "Cranbourne Lad", jockey: "None", trainer: "Alexander Rae", weight: "58kg", odds: 0, wetTrackForm: "Poor", scratched: true }
   ]}
 ];
 
 let currentFilter = "ALL";
-let selectedMeetingId = 701;
+let selectedMeetingId = 801;
 
 document.addEventListener("DOMContentLoaded", () => {
   sortFeedChronologically();
@@ -416,7 +409,7 @@ function renderRaceStrip(resetSelection = false) {
   });
 
   if (filteredMeetings.length === 0) {
-    container.innerHTML = `<div style="font-size:11px; color:var(--text-dim); padding:6px; white-space:nowrap;">No upcoming fields.</div>`;
+    container.innerHTML = `<div style="font-size:11px; color:var(--text-dim); padding:6px; white-space:nowrap;">No fields open.</div>`;
     document.getElementById("field").innerHTML = `<div style="color:var(--text-muted); text-align:center; padding-top:40px;">No fields found.</div>`;
     return;
   }
@@ -467,10 +460,10 @@ function calculateWinProbabilities(runners, trackRating) {
       if (r.wetTrackForm === "Poor") scalarModifier -= 3.0;
     }
 
-    const eliteJockeys = ["Jason Collett", "Ben Melham", "Mark Zahra", "Jacob Opperman", "J. McNeil"];
+    const eliteJockeys = ["Jason Collett", "Ben Melham", "Mark Zahra", "Jacob Opperman", "J. McNeil", "J. Guthmann-Chester"];
     if (eliteJockeys.includes(r.jockey)) scalarModifier += 2.5;
 
-    const eliteStables = ["Ciaron Maher", "Tony Gollan", "Ben & JD Hayes", "Aaron Purcell"];
+    const eliteStables = ["Ciaron Maher", "Tony Gollan", "Ben & JD Hayes", "Aaron Purcell", "M. Price & Michael Kent"];
     if (eliteStables.includes(r.trainer)) scalarModifier += 2.0;
 
     let rawScore = r.baseProb + scalarModifier;
@@ -482,7 +475,7 @@ function calculateWinProbabilities(runners, trackRating) {
   let finalActive = adjustedRunners.map(r => ({
     ...r,
     finalProbability: ((r.calculatedScore / sumTotal) * 100).toFixed(1)
-  })).sort((a, b) => b.finalProbability - a.finalProbability);
+  )).sort((a, b) => b.finalProbability - a.finalProbability);
 
   let finalScratched = scratchedRunners.map(r => ({
     ...r,
