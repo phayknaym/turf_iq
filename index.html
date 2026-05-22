@@ -39,7 +39,6 @@ html, body {
   font-family: 'Instrument Sans', sans-serif;
 }
 
-/* ── SHELL ── */
 .shell {
   display: flex;
   flex-direction: column;
@@ -84,12 +83,6 @@ html, body {
   50%{opacity:.4;transform:scale(.65)}
 }
 
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .track-badge {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
@@ -126,7 +119,7 @@ html, body {
   cursor: pointer;
   transition: all .15s;
   background: var(--surface2);
-  min-width: 54px;
+  min-width: 65px;
 }
 .race-chip.active {
   border-color: var(--gold);
@@ -141,17 +134,9 @@ html, body {
 .rc-time {
   font-family: 'DM Mono', monospace;
   font-size: 9px;
-  color: var(--text-dim);
+  color: var(--text-muted);
   margin-top: 2px;
 }
-.rc-dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  margin-top: 4px;
-}
-.dot-live { background: var(--green); }
-.dot-upcoming { background: var(--blue); opacity:.6; }
-.dot-closed { background: var(--surface3); }
 
 /* ── CONDITIONS ROW ── */
 .cond-row {
@@ -169,7 +154,7 @@ html, body {
   flex-shrink: 0;
   padding: 8px 14px;
   border-right: 1px solid var(--border);
-  min-width: 90px;
+  min-width: 95px;
 }
 .cond-cell:last-child { border-right: none; }
 .cond-lbl {
@@ -180,14 +165,9 @@ html, body {
   text-transform: uppercase;
   margin-bottom: 3px;
 }
-.cond-val {
-  font-size: 13px;
-  font-weight: 600;
-}
-.cond-sub { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+.cond-val { font-size: 13px; font-weight: 600; }
 .cv-good { color: var(--green); }
 .cv-fair { color: var(--gold); }
-.cv-poor { color: var(--red); }
 
 /* ── SCROLL AREA ── */
 .scroll-area {
@@ -235,47 +215,21 @@ html, body {
   border-radius: 10px;
   margin-bottom: 10px;
   overflow: hidden;
-  transition: border-color .2s;
 }
 
-.hc-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 14px 10px;
-}
-
+.hc-top { display: flex; align-items: center; gap: 12px; padding: 14px 14px 10px; }
 .hc-num {
   width: 40px; height: 40px;
   background: var(--surface3);
   border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px;
-  color: var(--gold);
+  font-size: 22px; color: var(--gold);
   flex-shrink: 0;
 }
-
 .hc-info { flex: 1; min-width: 0; }
-
-.hc-name {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 20px;
-  color: var(--text);
-  letter-spacing: .5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.hc-sub {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+.hc-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); letter-spacing: .5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hc-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Score ring */
 .ring-wrap {
@@ -288,55 +242,23 @@ html, body {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 17px;
-  color: var(--text);
+  font-size: 17px; color: var(--text);
 }
 
 /* Mini badges */
-.hc-badges {
-  display: flex;
-  gap: 5px;
-  padding: 0 14px 10px;
-  flex-wrap: wrap;
-}
-.badge {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  padding: 3px 7px;
-  border-radius: 3px;
-}
+.hc-badges { display: flex; gap: 5px; padding: 0 14px 10px; flex-wrap: wrap; }
+.badge { font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 7px; border-radius: 3px; }
 .b-fit  { background: rgba(61,186,126,.1);  color: var(--green); }
 .b-jock { background: rgba(155,127,240,.1); color: var(--purple); }
 .b-odds { background: rgba(201,168,76,.08); color: var(--gold-light); }
 
 /* Bars */
-.hc-bars {
-  padding: 0 14px 14px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 12px;
-}
-.bar-lbl {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-.bar-track {
-  height: 4px;
-  background: var(--surface3);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.bar-fill {
-  height: 100%;
-  border-radius: 2px;
-}
+.hc-bars { padding: 0 14px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+.bar-lbl { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+.bar-track { height: 4px; background: var(--surface3); border-radius: 2px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 2px; }
 .bf-green  { background: var(--green); }
 .bf-gold   { background: var(--gold); }
-.bf-purple { background: var(--purple); }
-.bf-blue   { background: var(--blue); }
 
 /* Bottom Nav */
 .bottom-nav {
@@ -386,23 +308,25 @@ html, body {
 
   <div class="scroll-area">
     <div class="tab-bar">
-      <div class="tab active" onclick="switchTab('field')">Field</div>
-      <div class="tab" onclick="switchTab('jockeys')">Jockeys</div>
+      <div class="tab active" id="tab-field" onclick="switchTab('field')">Field</div>
+      <div class="tab" id="tab-jockeys" onclick="switchTab('jockeys')">Jockeys</div>
     </div>
 
     <div id="field" class="panel active"></div>
 
     <div id="jockeys" class="panel">
-      <div style="padding: 20px; color: var(--text-muted); text-align: center;">Jockey analytics profiles loaded.</div>
+      <div style="padding: 30px 20px; color: var(--text-muted); text-align: center; font-size: 14px;">
+        Premium Jockey analytical performance tracks loaded successfully.
+      </div>
     </div>
   </div>
 
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('field')">
+    <div class="nav-item active" id="nav-field" onclick="switchTab('field')">
       <span class="nav-icon">📋</span>
       <span class="nav-lbl">Field</span>
     </div>
-    <div class="nav-item" onclick="switchTab('jockeys')">
+    <div class="nav-item" id="nav-jockeys" onclick="switchTab('jockeys')">
       <span class="nav-icon">✨</span>
       <span class="nav-lbl">Profiles</span>
     </div>
@@ -414,16 +338,16 @@ html, body {
 const appData = {
   activeRace: 4,
   races: [
-    { num: 1, time: "12:15", status: "closed" },
-    { num: 2, time: "12:50", status: "closed" },
-    { num: 3, time: "13:25", status: "live" },
-    { num: 4, time: "14:00", status: "upcoming" },
-    { num: 5, time: "14:40", status: "upcoming" }
+    { num: 1, time: "12:15" },
+    { num: 2, time: "12:50" },
+    { num: 3, time: "13:25" },
+    { num: 4, time: "14:00" },
+    { num: 5, time: "14:40" }
   ],
   horses: [
-    { num: 1, name: "Thunder Road", jockey: "J. McDonald", barrier: 4, weight: "58kg", score: 94, odds: "2.80", speed: 90, form: 85, stamina: 95, jockRating: 98 },
-    { num: 2, name: "Desert Orchid", jockey: "J. Collett", barrier: 9, weight: "56.5kg", score: 88, odds: "5.50", speed: 82, form: 90, stamina: 80, jockRating: 85 },
-    { num: 3, name: "Alchemist", jockey: "B. Avdulla", barrier: 2, weight: "55kg", score: 81, odds: "7.00", speed: 88, form: 74, stamina: 84, jockRating: 80 }
+    { num: 1, name: "Thunder Road", jockey: "J. McDonald", barrier: 4, weight: "58kg", score: 94, odds: "2.80", speed: 90, form: 85 },
+    { num: 2, name: "Desert Orchid", jockey: "J. Collett", barrier: 9, weight: "56.5kg", score: 88, odds: "5.50", speed: 82, form: 90 },
+    { num: 3, name: "Alchemist", jockey: "B. Avdulla", barrier: 2, weight: "55kg", score: 81, odds: "7.00", speed: 88, form: 74 }
   ]
 };
 
@@ -435,15 +359,22 @@ document.addEventListener("DOMContentLoaded", () => {
 function renderRaceStrip() {
   const container = document.getElementById("raceStrip");
   container.innerHTML = "";
+  
   appData.races.forEach(race => {
     const chip = document.createElement("div");
+    // Explicitly add an ID matching the index to bypass element hunting bugs
+    chip.id = `race-chip-${race.num}`;
     chip.className = `race-chip ${race.num === appData.activeRace ? 'active' : ''}`;
+    
     chip.onclick = () => {
+      // Clear active style on all chips explicitly
       document.querySelectorAll(".race-chip").forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
+      
       appData.activeRace = race.num;
       document.getElementById("trackBadge").innerText = `Randwick · R${race.num}`;
     };
+    
     chip.innerHTML = `
       <div class="rc-num">R${race.num}</div>
       <div class="rc-time">${race.time}</div>
@@ -478,7 +409,7 @@ function renderField() {
       <div class="hc-badges">
         <span class="badge b-odds">$${horse.odds}</span>
         <span class="badge b-fit">Fit</span>
-        <span class="badge b-jock">${horse.jockey}</span>
+        <span class="badge b-jock">${horse.jockey.split(' ')[1] || horse.jockey}</span>
       </div>
       <div class="hc-bars">
         <div>
@@ -496,19 +427,17 @@ function renderField() {
 }
 
 function switchTab(tabId) {
+  // Direct ID hide/show mapping routes
   document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
   document.getElementById(tabId).classList.add("active");
 
+  // Reset top bar sub-tab elements explicitly
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById(`tab-${tabId}`).classList.add("active");
 
-  if (tabId === 'field') {
-    document.querySelectorAll(".tab")[0].classList.add("active");
-    document.querySelectorAll(".nav-item")[0].classList.add("active");
-  } else {
-    document.querySelectorAll(".tab")[1].classList.add("active");
-    document.querySelectorAll(".nav-item")[1].classList.add("active");
-  }
+  // Reset bottom panel action navigation links explicitly
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById(`nav-${tabId}`).classList.add("active");
 }
 </script>
 </body>
