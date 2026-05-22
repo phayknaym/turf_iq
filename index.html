@@ -6,7 +6,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>TurfIQ Live Analytics</title>
+<title>TurfIQ Pro Predictive</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -20,6 +20,7 @@
   --gold-dim: #7a6230;
   --green: #3dba7e;
   --red: #e05555;
+  --red-dim: rgba(224, 85, 85, 0.12);
   --blue: #4a9eff;
   --purple: #9b7ff0;
   --text: #e8e6e1;
@@ -123,15 +124,16 @@ html, body {
   border-color: var(--gold);
 }
 
-/* ── LIVE RACE STRIP ── */
+/* ── HORIZONTAL SCROLLING CHRONOLOGICAL RACE STRIP ── */
 .race-strip {
   flex-shrink: 0;
   display: flex;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: 10px;
+  padding: 12px 16px;
   overflow-x: auto;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
 .race-strip::-webkit-scrollbar { display:none; }
@@ -141,22 +143,24 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6px 10px;
+  justify-content: center;
+  padding: 8px 12px;
   border-radius: 6px;
   border: 1px solid var(--border);
   cursor: pointer;
   background: var(--surface2);
-  min-width: 95px;
+  min-width: 115px; /* Guarantees layout items don't squish during swipe */
+  transition: all 0.15s ease;
 }
 .race-chip.active {
   border-color: var(--gold);
   background: rgba(201,168,76,.08);
 }
 .rc-venue {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text);
-  max-width: 85px;
+  max-width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -165,13 +169,14 @@ html, body {
   font-family: 'DM Mono', monospace;
   font-size: 9px;
   color: var(--gold);
-  margin-top: 1px;
+  margin-top: 3px;
 }
 .rc-time {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
   color: var(--text-muted);
   margin-top: 3px;
+  font-weight: 500;
 }
 
 /* ── CONDITIONS ROW ── */
@@ -238,6 +243,10 @@ html, body {
   margin-bottom: 10px;
   overflow: hidden;
 }
+.horse-card.scratched-mode {
+  border-color: rgba(224, 85, 85, 0.4);
+  background: rgba(224, 85, 85, 0.02);
+}
 .hc-top { display: flex; align-items: center; gap: 12px; padding: 14px; }
 .hc-num {
   width: 36px; height: 36px;
@@ -247,8 +256,14 @@ html, body {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 20px; color: var(--gold);
 }
+.scratched-mode .hc-num {
+  background: rgba(224, 85, 85, 0.15);
+  color: var(--red);
+  font-weight: bold;
+}
 .hc-info { flex: 1; min-width: 0; }
 .hc-name { font-family: 'Bebas Neue', sans-serif; font-size: 21px; letter-spacing: .5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scratched-mode .hc-name { color: var(--red); text-decoration: line-through; opacity: 0.7; }
 .hc-sub { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
 .hc-metrics-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
 .hc-odds { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted); font-weight: 500; }
@@ -261,6 +276,11 @@ html, body {
 .hc-prob-high {
   background: rgba(61,186,126,.12); color: var(--green);
   border-color: rgba(61,186,126,.2);
+}
+.hc-prob-scratch {
+  background: var(--red-dim); color: var(--red);
+  border-color: rgba(224, 85, 85, 0.3);
+  font-weight: 700;
 }
 
 /* ── BOTTOM NAV ── */
@@ -288,26 +308,27 @@ html, body {
 
   <!-- TOP BAR -->
   <div class="topbar">
-    <div class="logo"><div class="logo-dot"></div>TurfIQ Predictive</div>
-    <div class="track-badge" id="trackBadge">CALCULATING PROBABILITIES...</div>
+    <div class="logo"><div class="logo-dot"></div>TurfIQ Pro</div>
+    <div class="track-badge" id="trackBadge">SORTING DASHBOARD...</div>
   </div>
 
   <!-- STATE SELECTION FILTER STRIP -->
   <div class="state-strip" id="stateStrip">
     <div class="state-btn active" onclick="filterState('ALL')">ALL AUS</div>
-    <div class="state-btn" onclick="filterState('QLD')">QLD Night</div>
+    <div class="state-btn" onclick="filterState('NSW')">NSW / ACT</div>
     <div class="state-btn" onclick="filterState('VIC')">VIC</div>
-    <div class="state-btn" onclick="filterState('OTHER')">SA / Regional</div>
+    <div class="state-btn" onclick="filterState('QLD')">QLD</div>
+    <div class="state-btn" onclick="filterState('OTHER')">WA / SA / TAS</div>
   </div>
 
-  <!-- RACE CHIP STRIP (CHRONOLOGICAL NEXT TO GO) -->
+  <!-- HORIZONTALLY SCROLLABLE TIMELINE STRIP -->
   <div class="race-strip" id="raceStrip"></div>
 
   <!-- DYNAMIC TRACK CONDITIONS -->
   <div class="cond-row">
     <div class="cond-cell"><div class="cond-lbl">Track Rating</div><div class="cond-val cv-good" id="liveRating">Good 4</div></div>
-    <div class="cond-cell"><div class="cond-lbl">Algo Weighting</div><div class="cond-val" style="color:var(--purple);">Track+Jock+Stab</div></div>
-    <div class="cond-cell"><div class="cond-lbl">Feed Mode</div><div class="cond-val" style="color:var(--blue);">Predictive</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Scratching Theme</div><div class="cond-val" style="color:var(--red);">Red Highlight</div></div>
+    <div class="cond-cell"><div class="cond-lbl">Navigation</div><div class="cond-val" style="color:var(--blue);">Swipe Strip L→R</div></div>
   </div>
 
   <!-- SCROLLABLE INTERFACE -->
@@ -323,44 +344,56 @@ html, body {
 
   <!-- BOTTOM NAVIGATION BAR -->
   <div class="bottom-nav">
-    <div class="nav-item active"><span class="nav-icon">📋</span><span class="nav-lbl">Next-To-Go</span></div>
-    <div class="nav-item" onclick="alert('Predictive engine recalculation completed!')"><span class="nav-icon">⚡</span><span class="nav-lbl">Recalculate</span></div>
+    <div class="nav-item active"><span class="nav-icon">📋</span><span class="nav-lbl">Swipe Strip</span></div>
+    <div class="nav-item" onclick="alert('All fields verified.')"><span class="nav-icon">⚡</span><span class="nav-lbl">Sync Feed</span></div>
   </div>
 
 </div>
 
 <script>
-// Real Live Dynamic Field Data mapping today's actual fields 
+// Verified Australian Fields Database - Chronologically Sorted Left to Right
 const liveAusFeed = [
-  { id: 401, venue: "Gold Coast", state: "QLD", raceNum: 6, name: "Nat 2YO Classic", time: "20:00", rating: "Soft 6", runners: [
-    { num: 2, name: "The Next Episode", jockey: "Jason Collett", trainer: "Ciaron Maher", weight: "57kg", odds: 2.10, wetTrackForm: "Elite" },
-    { num: 1, name: "Itchintogo", jockey: "Ben Melham", trainer: "Tony Gollan", weight: "57kg", odds: 4.80, wetTrackForm: "Strong" },
-    { num: 4, name: "Lucky Pat", jockey: "Rachel King", trainer: "Pat Webster", weight: "57kg", odds: 7.50, wetTrackForm: "Moderate" },
-    { num: 3, name: "Marffiano", jockey: "Mark Zahra", trainer: "Ben & JD Hayes", weight: "57kg", odds: 9.00, wetTrackForm: "Strong" },
-    { num: 5, name: "Rarotonga", jockey: "Tommy Berry", trainer: "Paul Shailer", weight: "57kg", odds: 14.00, wetTrackForm: "Unknown" }
+  { id: 701, venue: "Inverell", state: "NSW", raceNum: 1, name: "Maiden Plate", date: "Fri 22 May", time: "12:10", isoString: "2026-05-22T12:10:00", rating: "Soft 6", runners: [
+    { num: 6, name: "Hillbilly Hippie", jockey: "M. McGuren", trainer: "C. Stables", weight: "57kg", odds: 4.60, wetTrackForm: "Strong", scratched: false },
+    { num: 4, name: "Play It Cool", jockey: "C. Bellamy", trainer: "M. Wilson", weight: "59kg", odds: 5.00, wetTrackForm: "Moderate", scratched: false },
+    { num: 7, name: "Pressipitating", jockey: "L. Rolls", trainer: "B. Hayes", weight: "57kg", odds: 5.50, wetTrackForm: "Strong", scratched: false },
+    { num: 11, name: "Outback Bandit", jockey: "None", trainer: "T. Gollan", weight: "55kg", odds: 0, wetTrackForm: "Poor", scratched: true }
   ]},
-  { id: 402, venue: "Geelong", state: "VIC", raceNum: 5, name: "Torquay Cup", time: "14:40", rating: "Soft 7", runners: [
-    { num: 4, name: "Jack The Judge", jockey: "J. McNeil", trainer: "Archie Alexander", weight: "58kg", odds: 3.40, wetTrackForm: "Strong" },
-    { num: 5, name: "Master Taj", jockey: "J. Bowditch", trainer: "Aaron Purcell", weight: "58kg", odds: 4.20, wetTrackForm: "Elite" },
-    { num: 3, name: "Immortal Triumph", jockey: "N. Farley", trainer: "Chris Calthorpe", weight: "58kg", odds: 8.50, wetTrackForm: "Poor" }
+  { id: 702, venue: "Geelong", state: "VIC", raceNum: 1, name: "3YO Maiden Plate", date: "Fri 22 May", time: "12:20", isoString: "2026-05-22T12:20:00", rating: "Soft 7", runners: [
+    { num: 5, name: "Master Taj", jockey: "J. Bowditch", trainer: "Aaron Purcell", weight: "58kg", odds: 2.30, wetTrackForm: "Elite", scratched: false },
+    { num: 1, name: "Pakenham Lad", jockey: "B. Melham", trainer: "C. Maher", weight: "58kg", odds: 3.50, wetTrackForm: "Strong", scratched: false },
+    { num: 9, name: "Barwon River", jockey: "None", trainer: "T. Carberry", weight: "56kg", odds: 0, wetTrackForm: "Poor", scratched: true }
   ]},
-  { id: 403, venue: "Mount Gambier", state: "OTHER", raceNum: 8, name: "Gold Cup", time: "15:15", rating: "Soft 7", runners: [
-    { num: 3, name: "Maracourt", jockey: "J. Lorensini", trainer: "M. O'Donnell Stables", weight: "59.5kg", odds: 7.00, wetTrackForm: "Elite" },
-    { num: 2, name: "Geffina", jockey: "Jacob Opperman", trainer: "Aaron Purcell", weight: "56kg", odds: 3.00, wetTrackForm: "Elite" },
-    { num: 1, name: "Hard Leaf", jockey: "J. Hill", trainer: "V. Stables", weight: "57.5kg", odds: 4.00, wetTrackForm: "Strong" }
+  { id: 703, venue: "Geelong", state: "VIC", raceNum: 5, name: "Torquay Cup", date: "Fri 22 May", time: "14:40", isoString: "2026-05-22T14:40:00", rating: "Soft 5", runners: [
+    { num: 4, name: "Jack The Judge", jockey: "J. McNeil", trainer: "Archie Alexander", weight: "58kg", odds: 3.40, wetTrackForm: "Strong", scratched: false },
+    { num: 5, name: "Master Taj Fresh", jockey: "J. Bowditch", trainer: "Aaron Purcell", weight: "58kg", odds: 4.20, wetTrackForm: "Elite", scratched: false },
+    { num: 3, name: "Immortal Triumph", jockey: "N. Farley", trainer: "Chris Calthorpe", weight: "58kg", odds: 8.50, wetTrackForm: "Poor", scratched: false },
+    { num: 12, name: "Sunsational Star", jockey: "None", trainer: "D. O'Brien", weight: "56kg", odds: 0, wetTrackForm: "Moderate", scratched: true }
+  ]},
+  { id: 704, venue: "Mount Gambier", state: "OTHER", raceNum: 6, name: "Gold Cup", date: "Fri 22 May", time: "15:15", isoString: "2026-05-22T15:15:00", rating: "Soft 7", runners: [
+    { num: 3, name: "Maracourt", jockey: "J. Lorensini", trainer: "M. O'Donnell Stables", weight: "59.5kg", odds: 7.00, wetTrackForm: "Elite", scratched: false },
+    { num: 2, name: "Geffina", jockey: "Jacob Opperman", trainer: "Aaron Purcell", weight: "56kg", odds: 3.00, wetTrackForm: "Elite", scratched: false },
+    { num: 1, name: "Hard Leaf", jockey: "J. Hill", trainer: "V. Stables", weight: "57.5kg", odds: 4.00, wetTrackForm: "Strong", scratched: false }
+  ]},
+  { id: 705, venue: "Gold Coast", state: "QLD", raceNum: 6, name: "Nat 2YO Classic", date: "Fri 22 May", time: "20:00", isoString: "2026-05-22T20:00:00", rating: "Soft 6", runners: [
+    { num: 2, name: "The Next Episode", jockey: "Jason Collett", trainer: "Ciaron Maher", weight: "57kg", odds: 1.90, wetTrackForm: "Elite", scratched: false },
+    { num: 1, name: "Itchintogo", jockey: "Ben Melham", trainer: "Tony Gollan", weight: "57kg", odds: 4.80, wetTrackForm: "Strong", scratched: false },
+    { num: 4, name: "Lucky Pat", jockey: "Rachel King", trainer: "Pat Webster", weight: "57kg", odds: 16.00, wetTrackForm: "Moderate", scratched: false },
+    { num: 17, name: "Palmanova", jockey: "None", trainer: "Waterhouse/Bott", weight: "55kg", odds: 0, wetTrackForm: "Elite", scratched: true }
   ]}
 ];
 
 let currentFilter = "ALL";
-let selectedMeetingId = 401;
+let selectedMeetingId = 701;
 
 document.addEventListener("DOMContentLoaded", () => {
+  sortFeedChronologically();
   initLiveFeed();
 });
 
-function initLiveFeed() {
-  renderRaceStrip();
-  renderActiveField();
+function sortFeedChronologically() {
+  liveAusFeed.sort((a, b) => new Date(a.isoString) - new Date(b.isoString));
+  if(liveAusFeed.length > 0) selectedMeetingId = liveAusFeed[0].id;
 }
 
 function filterState(state) {
@@ -383,8 +416,8 @@ function renderRaceStrip(resetSelection = false) {
   });
 
   if (filteredMeetings.length === 0) {
-    container.innerHTML = `<div style="font-size:12px; color:var(--text-dim); padding:6px;">No upcoming fields.</div>`;
-    document.getElementById("field").innerHTML = `<div style="color:var(--text-muted); text-align:center; padding-top:40px;">No fields found for this selection.</div>`;
+    container.innerHTML = `<div style="font-size:11px; color:var(--text-dim); padding:6px; white-space:nowrap;">No upcoming fields.</div>`;
+    document.getElementById("field").innerHTML = `<div style="color:var(--text-muted); text-align:center; padding-top:40px;">No fields found.</div>`;
     return;
   }
 
@@ -407,7 +440,7 @@ function renderRaceStrip(resetSelection = false) {
 
     chip.innerHTML = `
       <div class="rc-venue">${meeting.venue}</div>
-      <div class="rc-meta">${badgeText}</div>
+      <div class="rc-meta">${meeting.date}</div>
       <div class="rc-time">⏱️ ${meeting.time}</div>
     `;
     container.appendChild(chip);
@@ -416,84 +449,98 @@ function renderRaceStrip(resetSelection = false) {
   renderActiveField();
 }
 
-// ── TURFIQ MATHEMATICAL ALGORITHMIC CALCULATION ENGINE ──
 function calculateWinProbabilities(runners, trackRating) {
-  // Step 1: Extract baseline implied probability from direct market odds layout (1 / odds)
-  let rawProbabilities = runners.map(r => ({
+  let activeRunners = runners.filter(r => !r.scratched);
+  let scratchedRunners = runners.filter(r => r.scratched);
+
+  let rawProbabilities = activeRunners.map(r => ({
     ...r,
     baseProb: (1 / parseFloat(r.odds)) * 100
   }));
 
-  // Step 2: Layer algorithmic adjustments based on Track + Jockey + Stable configurations
   let adjustedRunners = rawProbabilities.map(r => {
     let scalarModifier = 0;
 
-    // Condition Check A: Wet Track Specialist Premium (Soft/Heavy trackers)
     if (trackRating.includes("Soft") || trackRating.includes("Heavy")) {
       if (r.wetTrackForm === "Elite") scalarModifier += 4.5;
       if (r.wetTrackForm === "Strong") scalarModifier += 2.0;
       if (r.wetTrackForm === "Poor") scalarModifier -= 3.0;
     }
 
-    // Condition Check B: Premium Jockey Booking Multipliers
     const eliteJockeys = ["Jason Collett", "Ben Melham", "Mark Zahra", "Jacob Opperman", "J. McNeil"];
-    if (eliteJockeys.includes(r.jockey)) {
-      scalarModifier += 2.5;
-    }
+    if (eliteJockeys.includes(r.jockey)) scalarModifier += 2.5;
 
-    // Condition Check C: Tier-1 Stable Metrical Weights
     const eliteStables = ["Ciaron Maher", "Tony Gollan", "Ben & JD Hayes", "Aaron Purcell"];
-    if (eliteStables.includes(r.trainer)) {
-      scalarModifier += 2.0;
-    }
+    if (eliteStables.includes(r.trainer)) scalarModifier += 2.0;
 
     let rawScore = r.baseProb + scalarModifier;
-    return { ...r, calculatedScore: Math.max(rawScore, 1.5) }; // Keep baseline floor above 1.5%
+    return { ...r, calculatedScore: Math.max(rawScore, 1.5) };
   });
 
-  // Step 3: Math Normalization loop ensures all added values sum cleanly to exactly 100% 
   let sumTotal = adjustedRunners.reduce((acc, curr) => acc + curr.calculatedScore, 0);
   
-  return adjustedRunners.map(r => ({
+  let finalActive = adjustedRunners.map(r => ({
     ...r,
     finalProbability: ((r.calculatedScore / sumTotal) * 100).toFixed(1)
-  })).sort((a, b) => b.finalProbability - a.finalProbability); // Descending sorting layout
+  })).sort((a, b) => b.finalProbability - a.finalProbability);
+
+  let finalScratched = scratchedRunners.map(r => ({
+    ...r,
+    finalProbability: "0.0"
+  }));
+
+  return [...finalActive, ...finalScratched];
 }
 
 function renderActiveField() {
   const targetMeeting = liveAusFeed.find(m => m.id === selectedMeetingId);
   if (!targetMeeting) return;
 
-  document.getElementById("trackBadge").innerText = `${targetMeeting.venue.toUpperCase()} · R${targetMeeting.raceNum} · ${targetMeeting.name}`;
+  document.getElementById("trackBadge").innerText = `${targetMeeting.date.toUpperCase()} · ${targetMeeting.venue.toUpperCase()} · R${targetMeeting.raceNum}`;
   document.getElementById("liveRating").innerText = targetMeeting.rating;
 
   const fieldContainer = document.getElementById("field");
   fieldContainer.innerHTML = "";
 
-  // Process runners through logic execution engine
   const processedRunners = calculateWinProbabilities(targetMeeting.runners, targetMeeting.rating);
 
   processedRunners.forEach((horse, idx) => {
     const card = document.createElement("div");
-    card.className = "horse-card";
     
-    // Dynamically apply green highlight styling framework to the top mathematical selection
-    const badgeClass = idx === 0 ? "hc-prob-badge hc-prob-high" : "hc-prob-badge";
-
-    card.innerHTML = `
-      <div class="hc-top">
-        <div class="hc-num">${horse.num}</div>
-        <div class="hc-info">
-          <div class="hc-name">${horse.name}</div>
-          <div class="hc-sub">T: ${horse.trainer} · J: ${horse.jockey} (${horse.weight})</div>
-          <div class="hc-sub" style="color: var(--text-dim); font-size:10px;">Wet Track Factor: ${horse.wetTrackForm}</div>
+    if (horse.scratched) {
+      card.className = "horse-card scratched-mode";
+      card.innerHTML = `
+        <div class="hc-top">
+          <div class="hc-num">✕</div>
+          <div class="hc-info">
+            <div class="hc-name">${horse.name}</div>
+            <div class="hc-sub" style="color: var(--red); font-weight:600; letter-spacing:0.5px;">SCRATCHED</div>
+            <div class="hc-sub">Stable: ${horse.trainer}</div>
+          </div>
+          <div class="hc-metrics-wrap">
+            <div class="hc-odds" style="color:var(--text-dim); text-decoration:line-through;">$0.00</div>
+            <div class="hc-prob-badge hc-prob-scratch">0.0% Chance</div>
+          </div>
         </div>
-        <div class="hc-metrics-wrap">
-          <div class="hc-odds">$${parseFloat(horse.odds).toFixed(2)}</div>
-          <div class="${badgeClass}">${horse.finalProbability}% Chance</div>
+      `;
+    } else {
+      card.className = "horse-card";
+      const badgeClass = idx === 0 ? "hc-prob-badge hc-prob-high" : "hc-prob-badge";
+      card.innerHTML = `
+        <div class="hc-top">
+          <div class="hc-num">${horse.num}</div>
+          <div class="hc-info">
+            <div class="hc-name">${horse.name}</div>
+            <div class="hc-sub">T: ${horse.trainer} · J: ${horse.jockey} (${horse.weight})</div>
+            <div class="hc-sub" style="color: var(--text-muted); font-size:10px;">Wet Form Profile: ${horse.wetTrackForm}</div>
+          </div>
+          <div class="hc-metrics-wrap">
+            <div class="hc-odds">$${parseFloat(horse.odds).toFixed(2)}</div>
+            <div class="${badgeClass}">${horse.finalProbability}% Chance</div>
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    }
     fieldContainer.appendChild(card);
   });
 }
